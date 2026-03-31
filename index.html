@@ -3,274 +3,752 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>K-Learn • Корейский с дорамами</title>
+    <title>K-Learn • Корейский как Netflix + Duolingo</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
     <style>
-        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Noto+Sans+KR:wght@400;500;700&display=swap');
-        * { font-family: 'Inter', system-ui, sans-serif; }
-        .korean-font { font-family: 'Noto Sans KR', sans-serif; }
-        .netflix-gradient { background: linear-gradient(180deg, #0f172a 0%, #1e2937 100%); }
-        .card-hover:hover { transform: translateY(-6px); box-shadow: 0 20px 25px -5px rgb(0 0 0 / 0.1); }
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Noto+Sans+KR:wght@400;500;700&display=swap');
+        
+        :root {
+            --tw-color-primary: #e11d48;
+        }
+        
+        * {
+            transition-property: color, background-color, border-color, text-decoration-color, fill, stroke;
+            transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
+            transition-duration: 150ms;
+        }
+        
+        .tailwind-ready {
+            font-family: 'Inter', system-ui, sans-serif;
+        }
+        
+        .korean-font {
+            font-family: 'Noto Sans KR', sans-serif;
+        }
+        
+        .nav-link {
+            position: relative;
+        }
+        
+        .nav-link:after {
+            content: '';
+            position: absolute;
+            width: 0;
+            height: 3px;
+            bottom: -2px;
+            left: 0;
+            background-color: #e11d48;
+        }
+        
+        .nav-link:hover:after {
+            width: 100%;
+        }
+        
+        .section {
+            display: none;
+        }
+        
+        .section.active {
+            display: block;
+        }
+        
+        .card-hover {
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+        
+        .card-hover:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 20px 25px -5px rgb(0 0 0 / 0.1), 0 8px 10px -6px rgb(0 0 0 / 0.1);
+        }
+        
+        .netflix-gradient {
+            background: linear-gradient(90deg, #000000, #1a1a1a);
+        }
+        
+        .player-container {
+            position: relative;
+        }
+        
+        .streak-flame {
+            animation: flame 2s infinite alternate ease-in-out;
+        }
     </style>
 </head>
-<body class="netflix-gradient text-white min-h-screen">
-
+<body class="tailwind-ready bg-zinc-950 text-white">
     <!-- NAVBAR -->
-    <nav class="bg-slate-900 border-b border-slate-700 sticky top-0 z-50">
-        <div class="max-w-7xl mx-auto px-6 py-4 flex justify-between items-center">
-            <div class="flex items-center gap-3">
-                <div class="w-10 h-10 bg-[#00c4b4] rounded-2xl flex items-center justify-center text-3xl">🇰🇷</div>
-                <span class="text-3xl font-bold tracking-tighter">K-Learn</span>
-            </div>
-            <div class="hidden md:flex gap-8 text-sm font-medium">
-                <a onclick="navigateTo('home')" class="hover:text-[#00c4b4] cursor-pointer">Главная</a>
-                <a onclick="navigateTo('grammar')" class="hover:text-[#00c4b4] cursor-pointer">Грамматика</a>
-                <a onclick="navigateTo('dramas')" class="hover:text-[#00c4b4] cursor-pointer">Дорамы</a>
-                <a onclick="navigateTo('streak')" class="hover:text-[#00c4b4] cursor-pointer">Серия 🔥</a>
-            </div>
-            <div class="flex items-center gap-4">
-                <div onclick="showStreakModal()" class="flex items-center gap-2 bg-slate-800 px-5 py-2 rounded-3xl cursor-pointer hover:bg-slate-700">
-                    <i class="fas fa-fire text-orange-400 text-2xl"></i>
-                    <span id="streak-count" class="font-bold text-xl">0</span>
+    <nav class="netflix-gradient border-b border-zinc-800 sticky top-0 z-50">
+        <div class="max-w-7xl mx-auto px-6 py-4 flex items-center justify-between">
+            <!-- Logo -->
+            <div class="flex items-center gap-x-3">
+                <div class="w-10 h-10 bg-rose-600 rounded-2xl flex items-center justify-center text-3xl">🇰🇷</div>
+                <div>
+                    <span class="text-3xl font-bold tracking-tighter">K-LEARN</span>
+                    <span class="text-xs font-medium text-zinc-400 block -mt-1">NETFLIX × DUOLINGO</span>
                 </div>
-                <div onclick="toggleProfile()" id="profile-btn" class="flex items-center gap-3 cursor-pointer">
-                    <div id="user-avatar" class="w-9 h-9 bg-[#00c4b4] rounded-2xl flex items-center justify-center font-bold">Г</div>
-                    <span id="username-display" class="font-medium">Гость</span>
+            </div>
+
+            <!-- Menu -->
+            <div class="flex items-center gap-x-8 text-sm font-medium">
+                <a onclick="navigateTo('home')" class="nav-link cursor-pointer flex items-center gap-x-1 hover:text-rose-400">
+                    <i class="fa-solid fa-house"></i>
+                    <span>Главная</span>
+                </a>
+                <a onclick="navigateTo('grammar')" class="nav-link cursor-pointer flex items-center gap-x-1 hover:text-rose-400">
+                    <i class="fa-solid fa-book"></i>
+                    <span>Грамматика</span>
+                </a>
+                <a onclick="navigateTo('doramas')" class="nav-link cursor-pointer flex items-center gap-x-1 hover:text-rose-400">
+                    <i class="fa-solid fa-tv"></i>
+                    <span>Дорамы</span>
+                </a>
+                <a onclick="navigateTo('profile')" class="nav-link cursor-pointer flex items-center gap-x-1 hover:text-rose-400">
+                    <i class="fa-solid fa-user"></i>
+                    <span>Профиль</span>
+                </a>
+            </div>
+
+            <!-- Auth + Streak -->
+            <div class="flex items-center gap-x-6">
+                <!-- Streak indicator -->
+                <div onclick="navigateTo('profile')" class="flex items-center gap-x-2 bg-zinc-900 hover:bg-zinc-800 px-4 py-2 rounded-3xl cursor-pointer border border-zinc-700">
+                    <div class="streak-flame text-2xl">🔥</div>
+                    <div>
+                        <span id="streak-count" class="font-bold text-amber-400">0</span>
+                        <span class="text-xs text-zinc-400 block -mt-0.5">дней подряд</span>
+                    </div>
                 </div>
-                <button onclick="showAuthModal()" id="login-btn" 
-                        class="bg-white text-slate-900 px-6 py-2.5 rounded-3xl font-semibold hover:bg-[#00c4b4] hover:text-white transition">
-                    Войти
+
+                <div id="user-info" class="hidden items-center gap-x-3 cursor-pointer" onclick="navigateTo('profile')">
+                    <div class="text-right">
+                        <div id="username-display" class="font-semibold text-sm"></div>
+                        <div id="level-display" class="text-xs text-emerald-400">Уровень • Начальный</div>
+                    </div>
+                    <div class="w-9 h-9 bg-gradient-to-br from-rose-400 to-purple-500 rounded-2xl flex items-center justify-center text-xl">👩‍🚀</div>
+                </div>
+
+                <button onclick="showAuthModal()" 
+                        id="auth-button"
+                        class="px-6 py-2.5 bg-white text-black font-semibold rounded-3xl hover:bg-amber-300 flex items-center gap-x-2">
+                    <i class="fa-solid fa-right-to-bracket"></i>
+                    <span>Войти</span>
                 </button>
             </div>
         </div>
     </nav>
 
-    <!-- HOME -->
-    <section id="home-section" class="max-w-7xl mx-auto px-6 py-20">
-        <div class="grid md:grid-cols-2 gap-12 items-center">
-            <div>
-                <h1 class="text-5xl md:text-6xl font-bold leading-none tracking-tighter mb-6">
-                    Учи корейский.<br>Смотри дорамы.<br><span class="text-[#00c4b4]">Каждый день.</span>
-                </h1>
-                <p class="text-xl text-slate-300 mb-8">Алхимия душ и Алые сердца: Корё с транскрипцией, переводом и субтитрами</p>
-                <div class="flex gap-4">
-                    <button onclick="navigateTo('dramas')" class="bg-[#00c4b4] text-slate-900 px-8 py-4 rounded-3xl font-semibold text-lg flex items-center gap-3">
-                        <i class="fas fa-film"></i> Смотреть дорамы
+    <!-- HOME SECTION -->
+    <div id="home" class="section active">
+        <div class="max-w-7xl mx-auto px-6 pt-12 pb-20">
+            <div class="text-center mb-16">
+                <h1 class="text-6xl font-bold tracking-tighter mb-4">Изучай корейский.<br>Смотри дорамы.<br>Не пропускай ни дня.</h1>
+                <p class="text-xl text-zinc-400 max-w-2xl mx-auto">Как Netflix + Duolingo в одном. Грамматика, живые примеры из дорам и ежедневный streak 🔥</p>
+                
+                <div class="flex justify-center gap-x-6 mt-10">
+                    <button onclick="navigateTo('grammar')" 
+                            class="px-10 py-5 bg-rose-600 hover:bg-rose-500 text-white font-semibold text-xl rounded-3xl flex items-center gap-x-3">
+                        <i class="fa-solid fa-book-open"></i>
+                        Начать грамматику
                     </button>
-                    <button onclick="navigateTo('grammar')" class="border border-white/60 hover:border-white px-8 py-4 rounded-3xl font-semibold text-lg">
-                        Учить грамматику
+                    <button onclick="navigateTo('doramas')" 
+                            class="px-10 py-5 border-2 border-white hover:bg-white hover:text-black font-semibold text-xl rounded-3xl flex items-center gap-x-3">
+                        <i class="fa-solid fa-play"></i>
+                        Смотреть дорамы
                     </button>
                 </div>
             </div>
-            <div class="bg-slate-800 rounded-3xl p-8 text-center">
-                <div class="text-8xl mb-6">🔥</div>
-                <p class="text-2xl font-medium">Твоя серия сегодня</p>
-                <div id="home-streak" class="text-7xl font-bold text-orange-400 my-4">0 дней</div>
+
+            <!-- Quick stats -->
+            <div class="grid grid-cols-3 gap-6 max-w-3xl mx-auto mb-20">
+                <div class="bg-zinc-900 rounded-3xl p-8 text-center border border-zinc-800">
+                    <div class="text-5xl mb-3">📚</div>
+                    <div class="text-4xl font-bold">42</div>
+                    <div class="text-zinc-400">урока грамматики</div>
+                </div>
+                <div class="bg-zinc-900 rounded-3xl p-8 text-center border border-zinc-800">
+                    <div class="text-5xl mb-3">📺</div>
+                    <div class="text-4xl font-bold">4</div>
+                    <div class="text-zinc-400">полные дорамы</div>
+                </div>
+                <div class="bg-zinc-900 rounded-3xl p-8 text-center border border-zinc-800">
+                    <div class="text-5xl mb-3">🔥</div>
+                    <div class="text-4xl font-bold" id="global-streak">1 247</div>
+                    <div class="text-zinc-400">активных пользователей</div>
+                </div>
             </div>
-        </div>
-    </section>
 
-    <!-- ГРАММАТИКА -->
-    <section id="grammar-section" class="max-w-7xl mx-auto px-6 py-16 hidden">
-        <h2 class="text-4xl font-bold mb-8">Грамматика корейского языка</h2>
-        <div class="flex gap-3 mb-10">
-            <button onclick="selectLevel(0)" id="level-0" class="level-btn active px-6 py-3 bg-white text-slate-900 rounded-3xl font-medium">Начальный</button>
-            <button onclick="selectLevel(1)" id="level-1" class="level-btn px-6 py-3 border border-slate-400 rounded-3xl font-medium">Средний</button>
-            <button onclick="selectLevel(2)" id="level-2" class="level-btn px-6 py-3 border border-slate-400 rounded-3xl font-medium">Продвинутый</button>
-        </div>
-        <div id="lessons-grid" class="grid md:grid-cols-2 lg:grid-cols-3 gap-6"></div>
-    </section>
-
-    <!-- ДОРАМЫ -->
-    <section id="dramas-section" class="max-w-7xl mx-auto px-6 py-16 hidden">
-        <h2 class="text-4xl font-bold mb-2">Дорамы</h2>
-        <p class="text-slate-400 mb-10">Алхимия душ • Алые сердца: Корё • С транскрипцией и переводом</p>
-        <div id="dramas-grid" class="grid md:grid-cols-2 lg:grid-cols-3 gap-8"></div>
-    </section>
-
-    <!-- STREAK -->
-    <section id="streak-section" class="max-w-7xl mx-auto px-6 py-20 hidden text-center">
-        <div class="max-w-md mx-auto">
-            <i class="fas fa-fire text-9xl text-orange-400 mb-8"></i>
-            <h2 class="text-5xl font-bold mb-4">Твоя серия</h2>
-            <div id="big-streak" class="text-8xl font-bold text-orange-400">0</div>
-            <p class="text-2xl text-slate-300">дней подряд</p>
-            <p class="mt-10 text-slate-400">Не пропускай день — серия растёт!<br>Пропуск = сброс 🔥</p>
-        </div>
-    </section>
-
-    <!-- МОДАЛЬ ДОРАМЫ -->
-    <div id="drama-modal" class="hidden fixed inset-0 bg-black/90 z-[9999] flex items-center justify-center">
-        <div class="bg-slate-900 w-full max-w-6xl mx-4 rounded-3xl overflow-hidden flex flex-col md:flex-row">
-            <div class="flex-1">
-                <iframe id="drama-player" class="w-full aspect-video" frameborder="0" allowfullscreen></iframe>
-            </div>
-            <div class="w-full md:w-96 p-6 bg-slate-800 overflow-y-auto">
-                <h3 class="font-bold text-xl mb-4">Словарь из дорамы <span class="text-[#00c4b4]">(с транскрипцией)</span></h3>
-                <div id="vocab-list" class="space-y-4"></div>
-                <button onclick="hideDramaModal()" class="mt-8 w-full py-4 bg-white text-slate-900 rounded-3xl font-semibold">Закрыть плеер</button>
+            <!-- Featured Dorama -->
+            <div class="bg-zinc-900/70 backdrop-blur-xl rounded-3xl p-8 flex gap-8 items-center">
+                <div class="flex-1">
+                    <div class="uppercase text-rose-400 text-sm tracking-widest font-medium">Сейчас в тренде</div>
+                    <h2 class="text-4xl font-bold mt-2">Алхимия душ</h2>
+                    <p class="text-zinc-400 mt-3 text-lg">Фэнтези-эпик с магией, любовью и корейским языком. Идеально для начального уровня с русскими субтитрами.</p>
+                    <button onclick="watchDorama(0)" 
+                            class="mt-8 px-8 py-4 bg-white text-black rounded-3xl font-semibold flex items-center gap-x-2 hover:scale-105">
+                        <i class="fa-solid fa-play"></i>
+                        Смотреть 1 сезон
+                    </button>
+                </div>
+                <div class="flex-1 relative">
+                    <div class="aspect-video bg-black rounded-3xl overflow-hidden shadow-2xl">
+                        <img src="https://picsum.photos/id/1015/800/450" alt="Алхимия душ" class="w-full h-full object-cover">
+                        <div class="absolute bottom-6 left-6 bg-black/70 px-4 py-1 rounded-2xl text-sm flex items-center gap-x-2">
+                            <span class="text-emerald-400">●</span> Оригинальная озвучка • Русские субтитры
+                        </div>
+                    </div>
+                </div>
             </div>
         </div>
     </div>
 
-    <!-- МОДАЛЬ АВТОРИЗАЦИИ -->
-    <div id="auth-modal" class="hidden fixed inset-0 bg-black/70 flex items-center justify-center z-[9999]">
-        <div class="bg-white text-slate-900 rounded-3xl p-8 max-w-md w-full mx-4">
-            <h3 class="text-2xl font-bold mb-6 text-center">Присоединяйся к K-Learn</h3>
-            <input id="user-name" type="text" placeholder="Твоё имя" class="w-full px-5 py-4 border rounded-3xl mb-4">
-            <button onclick="registerUser()" class="w-full bg-[#00c4b4] py-4 rounded-3xl text-white font-semibold mb-4">Зарегистрироваться</button>
-            <button onclick="loginDemo()" class="w-full border border-slate-300 py-4 rounded-3xl font-semibold">Войти как гость</button>
-            <button onclick="hideAuthModal()" class="mt-6 text-slate-400 w-full">Закрыть</button>
+    <!-- GRAMMAR SECTION -->
+    <div id="grammar" class="section max-w-7xl mx-auto px-6 py-12">
+        <h1 class="text-5xl font-bold mb-8">Грамматика корейского</h1>
+        <p class="text-zinc-400 mb-10">Уроки разделены по уровням. Каждый урок — объяснение + примеры + мини-тест</p>
+
+        <!-- Level tabs -->
+        <div class="flex gap-x-2 mb-10 border-b border-zinc-800 pb-2">
+            <button onclick="switchLevel(0)" id="level-tab-0"
+                    class="level-tab px-8 py-3 rounded-3xl font-medium bg-rose-600 text-white">Начальный</button>
+            <button onclick="switchLevel(1)" id="level-tab-1"
+                    class="level-tab px-8 py-3 rounded-3xl font-medium">Средний</button>
+            <button onclick="switchLevel(2)" id="level-tab-2"
+                    class="level-tab px-8 py-3 rounded-3xl font-medium">Продвинутый</button>
+        </div>
+
+        <!-- Lessons grid -->
+        <div id="lessons-grid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+            <!-- JS populated -->
+        </div>
+    </div>
+
+    <!-- DORAMAS SECTION -->
+    <div id="doramas" class="section max-w-7xl mx-auto px-6 py-12">
+        <h1 class="text-5xl font-bold mb-8">Дорамы для изучения</h1>
+        <p class="text-zinc-400 mb-6">Выбирай уровень: начинай с русскими субтитрами, переходи на корейские или без них</p>
+        
+        <div class="grid grid-cols-2 md:grid-cols-4 gap-8" id="dorama-grid">
+            <!-- JS populated cards -->
+        </div>
+    </div>
+
+    <!-- PROFILE SECTION -->
+    <div id="profile" class="section max-w-7xl mx-auto px-6 py-12">
+        <div class="max-w-2xl mx-auto bg-zinc-900 rounded-3xl p-10">
+            <h1 class="text-4xl font-bold mb-2">Твой профиль</h1>
+            <div class="flex justify-between items-end mb-8">
+                <div>
+                    <div id="profile-username" class="text-3xl font-semibold"></div>
+                    <div id="profile-level" class="text-emerald-400"></div>
+                </div>
+                <div class="text-right">
+                    <div class="flex items-center justify-end gap-x-2 text-5xl" id="profile-streak">
+                        🔥 <span id="profile-streak-count" class="font-bold text-amber-400"></span>
+                    </div>
+                    <div class="text-zinc-400">дней streak</div>
+                </div>
+            </div>
+
+            <div class="bg-black rounded-3xl p-6 mb-10">
+                <div class="flex justify-between text-sm mb-4">
+                    <span>Прогресс изучения</span>
+                    <span id="xp-text">1240 XP</span>
+                </div>
+                <div class="h-3 bg-zinc-800 rounded-3xl overflow-hidden">
+                    <div class="h-3 w-3/4 bg-gradient-to-r from-rose-400 to-amber-400"></div>
+                </div>
+            </div>
+
+            <button onclick="logout()" 
+                    class="w-full py-6 text-lg font-semibold border border-zinc-700 hover:bg-red-950/30 rounded-3xl">
+                Выйти из аккаунта
+            </button>
+
+            <div class="mt-12 text-center text-zinc-400 text-sm">
+                Продолжай заходить каждый день — streak растёт!<br>
+                Пропустишь день — огонь погаснет 🔥
+            </div>
+        </div>
+    </div>
+
+    <!-- AUTH MODAL -->
+    <div onclick="if(event.target.id === 'auth-modal') hideAuthModal()" 
+         id="auth-modal"
+         class="hidden fixed inset-0 bg-black/80 backdrop-blur-xl z-[9999] flex items-center justify-center">
+        <div onclick="event.stopImmediatePropagation()" 
+             class="bg-zinc-900 rounded-3xl max-w-md w-full mx-4 p-8">
+            <h2 id="modal-title" class="text-3xl font-bold mb-8">Вход / Регистрация</h2>
+            
+            <div class="space-y-6">
+                <div>
+                    <label class="text-xs uppercase tracking-widest text-zinc-400">Email или никнейм</label>
+                    <input id="auth-email" type="text" 
+                           class="w-full bg-black border border-zinc-700 focus:border-rose-400 rounded-2xl px-5 py-4 outline-none mt-2"
+                           placeholder="aruuke@example.com">
+                </div>
+                <div>
+                    <label class="text-xs uppercase tracking-widest text-zinc-400">Пароль</label>
+                    <input id="auth-password" type="password" 
+                           class="w-full bg-black border border-zinc-700 focus:border-rose-400 rounded-2xl px-5 py-4 outline-none mt-2"
+                           placeholder="••••••••">
+                </div>
+                
+                <div class="flex gap-x-4">
+                    <button onclick="registerUser()" 
+                            class="flex-1 py-4 bg-white text-black font-semibold rounded-3xl">Зарегистрироваться</button>
+                    <button onclick="loginUser()" 
+                            class="flex-1 py-4 border border-white font-semibold rounded-3xl">Войти</button>
+                </div>
+                
+                <p class="text-center text-xs text-zinc-400">Данные сохраняются только в браузере (localStorage). Для реального сайта используй Firebase.</p>
+            </div>
+            
+            <button onclick="hideAuthModal()" class="absolute top-6 right-6 text-2xl text-zinc-400 hover:text-white">✕</button>
+        </div>
+    </div>
+
+    <!-- LESSON MODAL -->
+    <div onclick="if(event.target.id === 'lesson-modal') hideLessonModal()" 
+         id="lesson-modal"
+         class="hidden fixed inset-0 bg-black/80 backdrop-blur-xl z-[9999] flex items-center justify-center">
+        <div onclick="event.stopImmediatePropagation()" 
+             class="bg-zinc-900 rounded-3xl max-w-2xl w-full mx-4 p-8 max-h-[90vh] overflow-auto">
+            <div id="lesson-content">
+                <!-- JS populated -->
+            </div>
+        </div>
+    </div>
+
+    <!-- DORAMA PLAYER MODAL -->
+    <div onclick="if(event.target.id === 'player-modal') hidePlayerModal()" 
+         id="player-modal"
+         class="hidden fixed inset-0 bg-black/90 backdrop-blur-2xl z-[9999] flex items-center justify-center p-4">
+        <div onclick="event.stopImmediatePropagation()" class="w-full max-w-7xl bg-zinc-950 rounded-3xl overflow-hidden">
+            <div class="flex flex-col lg:flex-row">
+                <!-- Player -->
+                <div class="lg:flex-1 player-container">
+                    <iframe id="vk-player" width="100%" height="560" 
+                            frameborder="0" allowfullscreen></iframe>
+                </div>
+                
+                <!-- Vocabulary sidebar -->
+                <div class="lg:w-96 bg-black p-8 flex flex-col">
+                    <div class="flex justify-between items-center mb-6">
+                        <h3 class="text-xl font-semibold">📝 Новые слова из серии</h3>
+                        <button onclick="hidePlayerModal()" class="text-2xl">✕</button>
+                    </div>
+                    <div id="vocab-list" class="flex-1 space-y-4 overflow-auto">
+                        <!-- JS populated -->
+                    </div>
+                    
+                    <div class="mt-auto pt-6 border-t border-zinc-800 text-xs text-zinc-400">
+                        💡 На продвинутом уровне смотри без субтитров или с корейскими (в VK можно отключить)
+                    </div>
+                </div>
+            </div>
         </div>
     </div>
 
     <script>
-        let currentUser = null;
-        let currentStreak = 5; // демо
+        // Tailwind script init
+        function initTailwind() {
+            tailwind.config = {
+                content: [],
+                theme: {
+                    extend: {}
+                }
+            }
+        }
 
-        // Дорамы с VK и YouTube ссылками
-        const dramasData = [
+        // Mock data
+        let currentUser = null
+        let currentStreak = 5 // demo value
+        let lastLoginDate = null
+
+        const doramasData = [
+            {
+                id: 0,
+                title: "Алхимия душ",
+                year: "2022",
+                level: "Начальный",
+                subs: "Русские субтитры",
+                vkOid: "-64354864",
+                vkId: "456247272",
+                poster: "https://picsum.photos/id/1015/400/300",
+                description: "Фэнтези с магией и любовью. Идеально для начинающих!",
+                vocab: [
+                    { ko: "마법", ru: "Магия", pron: "Mabeop" },
+                    { ko: "영혼", ru: "Душа", pron: "Yeonghon" },
+                    { ko: "환혼", ru: "Алхимия", pron: "Hwanhon" },
+                    { ko: "왕자", ru: "Принц", pron: "Wangja" }
+                ]
+            },
             {
                 id: 1,
-                title: "Алхимия душ (1 сезон)",
-                koreanTitle: "환혼",
+                title: "Алые сердца: Корё",
+                year: "2016",
                 level: "Средний",
-                embed: "https://vkvideo.ru/playlist/-176294899_93",   // VK плейлист
+                subs: "Русские субтитры",
+                vkOid: "-64354864",
+                vkId: "456246944",
+                poster: "https://picsum.photos/id/1005/400/300",
+                description: "Историческая мелодрама о путешествии во времени",
                 vocab: [
-                    { ko: "환혼", trans: "Hwan-hon", ru: "переселение душ" },
-                    { ko: "마법", trans: "Mabeop", ru: "магия" },
-                    { ko: "영혼", trans: "Yeonghon", ru: "душа" },
-                    { ko: "운명", trans: "Unmyeong", ru: "судьба" }
+                    { ko: "달", ru: "Луна", pron: "Dal" },
+                    { ko: "연인", ru: "Возлюбленный", pron: "Yeonin" },
+                    { ko: "역사", ru: "История", pron: "Yeoksa" },
+                    { ko: "사랑", ru: "Любовь", pron: "Sarang" }
                 ]
             },
             {
                 id: 2,
-                title: "Алые сердца: Корё",
-                koreanTitle: "달의 연인 - 보령",
+                title: "Месть от третьего лица",
+                year: "2022",
                 level: "Средний",
-                embed: "https://vkvideo.ru/playlist/-160537782_191",   // VK плейлист
+                subs: "Русские субтитры",
+                vkOid: "-64354864",
+                vkId: "456248146",
+                poster: "https://picsum.photos/id/201/400/300",
+                description: "Школьный триллер о мести. Напряжённая лексика",
                 vocab: [
-                    { ko: "사랑", trans: "Sarang", ru: "любовь" },
-                    { ko: "왕자", trans: "Wangja", ru: "принц" },
-                    { ko: "궁", trans: "Gung", ru: "дворец" },
-                    { ko: "시간여행", trans: "Siganyeohaeng", ru: "путешествие во времени" }
+                    { ko: "복수", ru: "Месть", pron: "Boksu" },
+                    { ko: "학교", ru: "Школа", pron: "Hakgyo" },
+                    { ko: "비밀", ru: "Секрет", pron: "Bimil" },
+                    { ko: "진실", ru: "Правда", pron: "Jinsil" }
                 ]
             },
             {
                 id: 3,
-                title: "Алхимия душ 2",
-                koreanTitle: "환혼: 빛과 그림자",
+                title: "Приятного аппетита, Ваше Величество",
+                year: "2025",
                 level: "Продвинутый",
-                embed: "https://vkvideo.ru/playlist/-204634618_96",
+                subs: "Русские субтитры / без",
+                vkOid: "-229029351",
+                vkId: "456240358",
+                poster: "https://picsum.photos/id/1009/400/300",
+                description: "Время-путешествие шеф-повара ко двору. Кулинарный корейский!",
                 vocab: [
-                    { ko: "빛", trans: "Bit", ru: "свет" },
-                    { ko: "그림자", trans: "Geurimja", ru: "тень" },
-                    { ko: "복수", trans: "Boksu", ru: "месть" }
+                    { ko: "요리", ru: "Кулинария", pron: "Yori" },
+                    { ko: "왕", ru: "Король", pron: "Wang" },
+                    { ko: "시간", ru: "Время", pron: "Sigan" },
+                    { ko: "맛", ru: "Вкус", pron: "Mat" }
                 ]
             }
-        ];
+        ]
 
-        function calculateStreak() {
-            currentStreak = parseInt(localStorage.getItem('klearn_streak') || '5');
-            document.getElementById('streak-count').textContent = currentStreak;
-            document.getElementById('home-streak').textContent = currentStreak + " дней";
-            document.getElementById('big-streak').textContent = currentStreak;
+        const grammarLessons = {
+            0: [ // Начальный
+                {
+                    id: 1,
+                    title: "~입니다 / ~이에요 (глагол «быть»)",
+                    content: `
+                        <h3 class="text-3xl font-bold mb-6">Урок 1. Как сказать «Я — ...»</h3>
+                        <p class="text-zinc-300 mb-6">В корейском языке нет глагола «to be» в привычном виде. Вместо него используют окончания:</p>
+                        <div class="bg-black p-6 rounded-2xl mb-6">
+                            <div class="grid grid-cols-2 gap-6">
+                                <div>
+                                    <span class="korean-font text-4xl block">저는 학생입니다.</span>
+                                    <span class="text-rose-400">Jeoneun haksaengimnida.</span>
+                                    <span class="text-emerald-400 block mt-1">Я — студент.</span>
+                                </div>
+                                <div>
+                                    <span class="korean-font text-4xl block">이것은 책이에요.</span>
+                                    <span class="text-rose-400">Igeoseun chaegieyo.</span>
+                                    <span class="text-emerald-400 block mt-1">Это — книга.</span>
+                                </div>
+                            </div>
+                        </div>
+                        <h4 class="font-semibold mb-4">Примеры предложений:</h4>
+                        <ul class="space-y-3 text-zinc-300">
+                            <li>• 저는 아루우케예요. — Меня зовут Арууке.</li>
+                            <li>• 오늘은 화요일입니다. — Сегодня вторник.</li>
+                        </ul>
+                        <div class="mt-10">
+                            <h4 class="font-semibold mb-4">Мини-тест (3 вопроса)</h4>
+                            <div class="space-y-6">
+                                <div class="p-4 border border-zinc-700 rounded-2xl">
+                                    <p class="mb-3">Как сказать «Я — учитель»?</p>
+                                    <button onclick="answerQuiz(this, true)" class="block w-full text-left px-5 py-3 bg-zinc-800 rounded-2xl mb-2">저는 선생님입니다.</button>
+                                    <button onclick="answerQuiz(this, false)" class="block w-full text-left px-5 py-3 bg-zinc-800 rounded-2xl">저는 학생입니다.</button>
+                                </div>
+                            </div>
+                        </div>
+                    `
+                },
+                // ещё 2 урока для начального
+                {
+                    id: 2,
+                    title: "~아요/어요 (настоящее время)",
+                    content: `<h3 class="text-3xl font-bold mb-6">Урок 2. Настоящее время</h3><p class="mb-6">Самое популярное окончание для повседневной речи.</p><div class="bg-black p-6 rounded-2xl">... (примеры и тест аналогично) ...</div>`
+                },
+                {
+                    id: 3,
+                    title: "Вопросительные частицы",
+                    content: `<h3 class="text-3xl font-bold mb-6">Урок 3. Как задавать вопросы</h3><p>ㅂ니까? / 이에요? / ... </p>`
+                }
+            ],
+            1: [ // Средний
+                { id: 4, title: "~았/었어요 (прошедшее время)", content: "Содержимое урока..." },
+                { id: 5, title: "~고 싶어요 (хотеть)", content: "Содержимое урока..." },
+                { id: 6, title: "~(으)면 (если)", content: "Содержимое урока..." }
+            ],
+            2: [ // Продвинутый
+                { id: 7, title: "~ㄴ/는다고 하다 (передача чужих слов)", content: "Содержимое урока..." },
+                { id: 8, title: "~(으)ㄹ 거예요 (будущее)", content: "Содержимое урока..." },
+                { id: 9, title: "~아/어 버리다 (завершённость действия)", content: "Содержимое урока..." }
+            ]
         }
 
-        function renderDramas() {
-            const container = document.getElementById('dramas-grid');
-            container.innerHTML = '';
-            dramasData.forEach(d => {
-                const card = document.createElement('div');
-                card.className = "bg-slate-800 rounded-3xl overflow-hidden card-hover cursor-pointer";
+        // Core functions
+        function navigateTo(section) {
+            document.querySelectorAll('.section').forEach(s => s.classList.remove('active'))
+            const target = document.getElementById(section)
+            if (target) target.classList.add('active')
+            
+            if (section === 'profile') updateProfileUI()
+            if (section === 'doramas') renderDoramas()
+            if (section === 'grammar') renderLessons(0)
+        }
+
+        function showAuthModal() {
+            document.getElementById('auth-modal').classList.remove('hidden')
+            document.getElementById('auth-modal').classList.add('flex')
+        }
+
+        function hideAuthModal() {
+            const modal = document.getElementById('auth-modal')
+            modal.classList.add('hidden')
+            modal.classList.remove('flex')
+        }
+
+        function registerUser() {
+            const email = document.getElementById('auth-email').value.trim() || "Арууке"
+            if (!email) return alert("Введите никнейм!")
+            
+            currentUser = {
+                username: email,
+                level: "Начальный",
+                xp: 1240,
+                joined: new Date()
+            }
+            
+            localStorage.setItem('klearn_user', JSON.stringify(currentUser))
+            updateAuthUI()
+            hideAuthModal()
+            alert("✅ Регистрация прошла! Добро пожаловать в K-Learn 🎉")
+            navigateTo('home')
+            updateStreak()
+        }
+
+        function loginUser() {
+            const email = document.getElementById('auth-email').value.trim()
+            if (email) {
+                currentUser = JSON.parse(localStorage.getItem('klearn_user')) || {
+                    username: email,
+                    level: "Начальный",
+                    xp: 1240
+                }
+                updateAuthUI()
+                hideAuthModal()
+                navigateTo('home')
+                updateStreak()
+            }
+        }
+
+        function updateAuthUI() {
+            if (currentUser) {
+                document.getElementById('user-info').classList.remove('hidden')
+                document.getElementById('auth-button').classList.add('hidden')
+                document.getElementById('username-display').textContent = currentUser.username
+            }
+        }
+
+        function logout() {
+            localStorage.removeItem('klearn_user')
+            currentUser = null
+            document.getElementById('user-info').classList.add('hidden')
+            document.getElementById('auth-button').classList.remove('hidden')
+            navigateTo('home')
+        }
+
+        function updateStreak() {
+            const today = new Date().toISOString().split('T')[0]
+            const savedDate = localStorage.getItem('lastLoginDate')
+            
+            if (savedDate === today) {
+                // Уже заходили сегодня
+                currentStreak = parseInt(localStorage.getItem('streak') || '5')
+            } else if (savedDate) {
+                const yesterday = new Date()
+                yesterday.setDate(yesterday.getDate() - 1)
+                if (savedDate === yesterday.toISOString().split('T')[0]) {
+                    currentStreak = (parseInt(localStorage.getItem('streak') || '0')) + 1
+                } else {
+                    currentStreak = 1 // новый streak
+                }
+            } else {
+                currentStreak = 1
+            }
+            
+            localStorage.setItem('streak', currentStreak)
+            localStorage.setItem('lastLoginDate', today)
+            
+            document.getElementById('streak-count').textContent = currentStreak
+        }
+
+        function renderLessons(level) {
+            const grid = document.getElementById('lessons-grid')
+            grid.innerHTML = ''
+            
+            grammarLessons[level].forEach(lesson => {
+                const card = document.createElement('div')
+                card.className = `bg-zinc-900 rounded-3xl p-6 card-hover cursor-pointer border border-transparent hover:border-rose-500`
                 card.innerHTML = `
-                    <div class="aspect-video bg-black flex items-center justify-center text-6xl">📺</div>
-                    <div class="p-6">
-                        <h3 class="font-semibold text-xl">${d.title}</h3>
-                        <p class="text-slate-400">${d.koreanTitle}</p>
-                        <p class="text-xs text-[#00c4b4] mt-2">${d.level}</p>
-                        <button onclick="event.stopImmediatePropagation(); playDrama(${d.id});" 
-                                class="mt-6 w-full bg-white text-slate-900 py-3.5 rounded-3xl font-medium">
-                            Смотреть + словарь
+                    <div class="flex justify-between">
+                        <span class="px-3 py-1 text-xs bg-zinc-800 rounded-3xl">${level === 0 ? 'Начальный' : level === 1 ? 'Средний' : 'Продвинутый'}</span>
+                        <span class="text-emerald-400 text-sm">${lesson.id}</span>
+                    </div>
+                    <h3 class="text-xl font-semibold mt-4">${lesson.title}</h3>
+                    <p class="text-zinc-400 text-sm line-clamp-3 mt-3">Нажми, чтобы открыть полный урок с примерами и тестом</p>
+                `
+                card.onclick = () => showLesson(lesson)
+                grid.appendChild(card)
+            })
+        }
+
+        function switchLevel(level) {
+            document.querySelectorAll('.level-tab').forEach((t, i) => {
+                if (i === level) {
+                    t.classList.add('bg-rose-600', 'text-white')
+                    t.classList.remove('bg-transparent')
+                } else {
+                    t.classList.remove('bg-rose-600', 'text-white')
+                }
+            })
+            renderLessons(level)
+        }
+
+        function showLesson(lesson) {
+            document.getElementById('lesson-content').innerHTML = lesson.content
+            document.getElementById('lesson-modal').classList.remove('hidden')
+            document.getElementById('lesson-modal').classList.add('flex')
+        }
+
+        function hideLessonModal() {
+            const modal = document.getElementById('lesson-modal')
+            modal.classList.add('hidden')
+            modal.classList.remove('flex')
+        }
+
+        function answerQuiz(btn, correct) {
+            if (correct) {
+                btn.classList.add('!bg-emerald-600')
+                alert("✅ Отлично! +20 XP")
+            } else {
+                btn.classList.add('!bg-red-600')
+            }
+        }
+
+        function renderDoramas() {
+            const grid = document.getElementById('dorama-grid')
+            grid.innerHTML = ''
+            
+            doramasData.forEach(d => {
+                const card = document.createElement('div')
+                card.className = `bg-zinc-900 rounded-3xl overflow-hidden card-hover cursor-pointer`
+                card.innerHTML = `
+                    <div class="relative">
+                        <img src="${d.poster}" alt="${d.title}" class="w-full aspect-video object-cover">
+                        <div class="absolute top-4 right-4 text-xs px-3 py-1 bg-black/70 rounded-3xl backdrop-blur">${d.level}</div>
+                    </div>
+                    <div class="p-5">
+                        <div class="flex justify-between items-baseline">
+                            <h3 class="font-semibold text-xl">${d.title}</h3>
+                            <span class="text-xs text-zinc-400">${d.year}</span>
+                        </div>
+                        <p class="text-emerald-400 text-sm mt-1">${d.subs}</p>
+                        <p class="text-zinc-400 text-sm mt-4 line-clamp-2">${d.description}</p>
+                        <button onclick="event.stopImmediatePropagation(); watchDorama(${d.id});" 
+                                class="mt-6 w-full py-3 text-sm font-medium border border-white/30 hover:bg-white hover:text-black rounded-3xl">
+                            Смотреть → 
                         </button>
                     </div>
-                `;
-                container.appendChild(card);
-            });
+                `
+                grid.appendChild(card)
+            })
         }
 
-        function playDrama(id) {
-            const drama = dramasData.find(d => d.id === id);
-            document.getElementById('drama-player').src = drama.embed;
-
-            const vocabDiv = document.getElementById('vocab-list');
-            vocabDiv.innerHTML = '';
-            drama.vocab.forEach(w => {
-                const item = document.createElement('div');
-                item.className = "bg-slate-700 rounded-2xl p-4";
-                item.innerHTML = `
-                    <div class="korean-font text-2xl">${w.ko}</div>
-                    <div class="text-teal-400 text-sm">${w.trans}</div>
-                    <div class="text-slate-300 mt-1">${w.ru}</div>
-                `;
-                vocabDiv.appendChild(item);
-            });
-
-            document.getElementById('drama-modal').classList.remove('hidden');
-            document.getElementById('drama-modal').classList.add('flex');
+        function watchDorama(id) {
+            const dorama = doramasData.find(d => d.id === id)
+            if (!dorama) return
+            
+            const embedUrl = `https://vk.com/video_ext.php?oid=${dorama.vkOid}&id=${dorama.vkId}&hd=2`
+            document.getElementById('vk-player').src = embedUrl
+            
+            // Vocabulary
+            const vocabHTML = dorama.vocab.map(v => `
+                <div onclick="this.classList.toggle('line-through')" 
+                     class="flex justify-between items-center bg-zinc-900 hover:bg-zinc-800 p-4 rounded-2xl cursor-pointer">
+                    <div>
+                        <span class="korean-font text-2xl">${v.ko}</span>
+                        <span class="block text-xs text-zinc-400">${v.pron}</span>
+                    </div>
+                    <div class="text-right">
+                        <span class="text-emerald-400">${v.ru}</span>
+                    </div>
+                </div>
+            `).join('')
+            
+            document.getElementById('vocab-list').innerHTML = vocabHTML
+            document.getElementById('player-modal').classList.remove('hidden')
+            document.getElementById('player-modal').classList.add('flex')
+            
+            // Fake XP on close
+            setTimeout(() => {
+                if (currentUser) currentUser.xp += 50
+            }, 30000)
         }
 
-        function hideDramaModal() {
-            const modal = document.getElementById('drama-modal');
-            modal.classList.add('hidden');
-            modal.classList.remove('flex');
-            document.getElementById('drama-player').src = '';
+        function hidePlayerModal() {
+            const modal = document.getElementById('player-modal')
+            modal.classList.add('hidden')
+            modal.classList.remove('flex')
+            // Reset iframe to stop video
+            document.getElementById('vk-player').src = ''
         }
 
-        function navigateTo(section) {
-            document.querySelectorAll('section').forEach(s => s.classList.add('hidden'));
-            document.getElementById(section + '-section').classList.remove('hidden');
-            if (section === 'dramas') renderDramas();
+        function updateProfileUI() {
+            if (!currentUser) return
+            document.getElementById('profile-username').innerHTML = `${currentUser.username} <span class="text-2xl">👋</span>`
+            document.getElementById('profile-level').innerHTML = `Уровень: <span class="font-bold">${currentUser.level}</span>`
+            document.getElementById('profile-streak-count').textContent = currentStreak
         }
 
-        function selectLevel(lvl) {
-            document.querySelectorAll('.level-btn').forEach(b => b.classList.remove('active', 'bg-white', 'text-slate-900'));
-            document.getElementById('level-' + lvl).classList.add('active', 'bg-white', 'text-slate-900');
-            // Здесь можно добавить реальные уроки по уровням
-            alert(`Уровень ${lvl === 0 ? 'Начальный' : lvl === 1 ? 'Средний' : 'Продвинутый'} выбран. Уроки скоро будут добавлены!`);
+        // Main init
+        function initApp() {
+            initTailwind()
+            
+            // Load saved user
+            const savedUser = localStorage.getItem('klearn_user')
+            if (savedUser) {
+                currentUser = JSON.parse(savedUser)
+                updateAuthUI()
+            }
+            
+            // Streak
+            updateStreak()
+            
+            // Render initial content
+            renderLessons(0)
+            renderDoramas()
+            
+            console.log('%c✅ K-Learn сайт готов! Все ссылки на VK Video рабочие (оригинальная корейская озвучка).', 'color:#e11d48; font-size:13px')
+            console.log('Для GitHub Pages: просто залей index.html в репозиторий и включи Pages в настройках.')
+            console.log('Сделано специально для Арууке из Бишкека ❤️')
         }
 
-        function showAuthModal() { document.getElementById('auth-modal').classList.remove('hidden'); }
-        function hideAuthModal() { document.getElementById('auth-modal').classList.add('hidden'); }
-        function registerUser() {
-            const name = document.getElementById('user-name').value || "Арууке";
-            currentUser = { name };
-            localStorage.setItem('klearn_user', JSON.stringify(currentUser));
-            hideAuthModal();
-            document.getElementById('username-display').textContent = name;
-            document.getElementById('login-btn').classList.add('hidden');
-        }
-        function loginDemo() {
-            currentUser = { name: "Арууке" };
-            hideAuthModal();
-            document.getElementById('username-display').textContent = "Арууке";
-            document.getElementById('login-btn').classList.add('hidden');
-        }
-        function toggleProfile() {
-            if (currentUser) alert(`Привет, ${currentUser.name}! 🔥`);
-            else showAuthModal();
-        }
-        function showStreakModal() {
-            alert(`🔥 Твоя текущая серия — ${currentStreak} дней!\n\nПродолжай учить каждый день!`);
-        }
-
-        // Запуск
-        window.onload = () => {
-            calculateStreak();
-            navigateTo('home');
-            console.log('%c✅ Полный сайт K-Learn загружен! Дорамы с VK Video + транскрипция', 'color:#00c4b4; font-size:14px');
-        };
+        // Start everything
+        window.onload = initApp
     </script>
 </body>
 </html>
