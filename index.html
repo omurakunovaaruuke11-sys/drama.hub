@@ -8,132 +8,152 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Noto+Sans+KR:wght@400;500;700&display=swap');
-        
         * { font-family: 'Inter', system-ui, sans-serif; }
         .korean-font { font-family: 'Noto Sans KR', sans-serif; }
-        
-        .card-hover:hover {
-            transform: translateY(-8px);
-            box-shadow: 0 25px 50px -12px rgb(0 0 0 / 0.25);
-        }
-        
-        .netflix-gradient {
-            background: linear-gradient(180deg, #0f172a 0%, #1e2937 100%);
-        }
-        
-        .vocab-item {
-            transition: all 0.2s ease;
-        }
-        .vocab-item:hover {
-            background-color: #334155;
-        }
+        .netflix-gradient { background: linear-gradient(180deg, #0f172a 0%, #1e2937 100%); }
+        .card-hover:hover { transform: translateY(-6px); box-shadow: 0 20px 25px -5px rgb(0 0 0 / 0.1); }
     </style>
 </head>
 <body class="netflix-gradient text-white min-h-screen">
 
-    <nav class="bg-slate-900 border-b border-slate-800 sticky top-0 z-50">
-        <div class="max-w-7xl mx-auto px-6 py-4 flex items-center justify-between">
-            <div class="flex items-center gap-x-3">
-                <div class="w-9 h-9 bg-[#00c4b4] rounded-xl flex items-center justify-center text-2xl">🇰🇷</div>
-                <span class="text-2xl font-semibold tracking-tighter">K-Learn</span>
+    <!-- NAVBAR -->
+    <nav class="bg-slate-900 border-b border-slate-700 sticky top-0 z-50">
+        <div class="max-w-7xl mx-auto px-6 py-4 flex justify-between items-center">
+            <div class="flex items-center gap-3">
+                <div class="w-10 h-10 bg-[#00c4b4] rounded-2xl flex items-center justify-center text-3xl">🇰🇷</div>
+                <span class="text-3xl font-bold tracking-tighter">K-Learn</span>
             </div>
-
-            <div class="hidden md:flex items-center gap-x-8 text-sm font-medium">
-                <a onclick="navigateTo('home')" class="hover:text-[#00c4b4]">Главная</a>
-                <a onclick="navigateTo('grammar')" class="hover:text-[#00c4b4]">Грамматика</a>
-                <a onclick="navigateTo('dramas')" class="hover:text-[#00c4b4]">Дорамы</a>
-                <a onclick="navigateTo('streak')" class="hover:text-[#00c4b4]">Серия</a>
+            <div class="hidden md:flex gap-8 text-sm font-medium">
+                <a onclick="navigateTo('home')" class="hover:text-[#00c4b4] cursor-pointer">Главная</a>
+                <a onclick="navigateTo('grammar')" class="hover:text-[#00c4b4] cursor-pointer">Грамматика</a>
+                <a onclick="navigateTo('dramas')" class="hover:text-[#00c4b4] cursor-pointer">Дорамы</a>
+                <a onclick="navigateTo('streak')" class="hover:text-[#00c4b4] cursor-pointer">Серия 🔥</a>
             </div>
-
-            <div class="flex items-center gap-x-4">
-                <div onclick="showStreakModal()" class="flex items-center gap-x-2 bg-slate-800 px-4 py-2 rounded-3xl cursor-pointer">
-                    <i class="fas fa-fire text-orange-400 text-xl"></i>
-                    <span id="streak-count" class="font-semibold text-lg">0</span>
+            <div class="flex items-center gap-4">
+                <div onclick="showStreakModal()" class="flex items-center gap-2 bg-slate-800 px-5 py-2 rounded-3xl cursor-pointer hover:bg-slate-700">
+                    <i class="fas fa-fire text-orange-400 text-2xl"></i>
+                    <span id="streak-count" class="font-bold text-xl">0</span>
                 </div>
-
-                <div onclick="toggleProfile()" id="profile-btn" class="flex items-center gap-x-3 cursor-pointer">
-                    <div id="user-avatar" class="w-8 h-8 bg-[#00c4b4] rounded-2xl flex items-center justify-center font-medium">Г</div>
-                    <span id="username-display" class="font-medium text-sm">Гость</span>
+                <div onclick="toggleProfile()" id="profile-btn" class="flex items-center gap-3 cursor-pointer">
+                    <div id="user-avatar" class="w-9 h-9 bg-[#00c4b4] rounded-2xl flex items-center justify-center font-bold">Г</div>
+                    <span id="username-display" class="font-medium">Гость</span>
                 </div>
-
                 <button onclick="showAuthModal()" id="login-btn" 
-                        class="bg-white text-slate-900 px-5 py-2 rounded-3xl font-semibold hover:bg-[#00c4b4] hover:text-white">
+                        class="bg-white text-slate-900 px-6 py-2.5 rounded-3xl font-semibold hover:bg-[#00c4b4] hover:text-white transition">
                     Войти
                 </button>
             </div>
         </div>
     </nav>
 
-    <!-- ДОРАМЫ -->
-    <section id="dramas-section" class="max-w-7xl mx-auto px-6 py-16">
-        <h2 class="text-4xl font-bold mb-2">Дорамы для изучения корейского</h2>
-        <p class="text-slate-400 mb-8">Алхимия душ • Алые сердца: Корё • С транскрипцией и переводом</p>
-
-        <div id="dramas-grid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-            <!-- Заполняется JS -->
+    <!-- HOME -->
+    <section id="home-section" class="max-w-7xl mx-auto px-6 py-20">
+        <div class="grid md:grid-cols-2 gap-12 items-center">
+            <div>
+                <h1 class="text-5xl md:text-6xl font-bold leading-none tracking-tighter mb-6">
+                    Учи корейский.<br>Смотри дорамы.<br><span class="text-[#00c4b4]">Каждый день.</span>
+                </h1>
+                <p class="text-xl text-slate-300 mb-8">Алхимия душ и Алые сердца: Корё с транскрипцией, переводом и субтитрами</p>
+                <div class="flex gap-4">
+                    <button onclick="navigateTo('dramas')" class="bg-[#00c4b4] text-slate-900 px-8 py-4 rounded-3xl font-semibold text-lg flex items-center gap-3">
+                        <i class="fas fa-film"></i> Смотреть дорамы
+                    </button>
+                    <button onclick="navigateTo('grammar')" class="border border-white/60 hover:border-white px-8 py-4 rounded-3xl font-semibold text-lg">
+                        Учить грамматику
+                    </button>
+                </div>
+            </div>
+            <div class="bg-slate-800 rounded-3xl p-8 text-center">
+                <div class="text-8xl mb-6">🔥</div>
+                <p class="text-2xl font-medium">Твоя серия сегодня</p>
+                <div id="home-streak" class="text-7xl font-bold text-orange-400 my-4">0 дней</div>
+            </div>
         </div>
     </section>
 
-    <!-- МОДАЛЬ ПРОСМОТРА ДОРАМЫ -->
-    <div id="drama-modal" class="hidden fixed inset-0 bg-black/90 flex items-center justify-center z-[9999]">
-        <div class="modal bg-slate-900 w-full max-w-5xl mx-4 rounded-3xl overflow-hidden flex flex-col md:flex-row">
-            
-            <!-- Плеер -->
+    <!-- ГРАММАТИКА -->
+    <section id="grammar-section" class="max-w-7xl mx-auto px-6 py-16 hidden">
+        <h2 class="text-4xl font-bold mb-8">Грамматика корейского языка</h2>
+        <div class="flex gap-3 mb-10">
+            <button onclick="selectLevel(0)" id="level-0" class="level-btn active px-6 py-3 bg-white text-slate-900 rounded-3xl font-medium">Начальный</button>
+            <button onclick="selectLevel(1)" id="level-1" class="level-btn px-6 py-3 border border-slate-400 rounded-3xl font-medium">Средний</button>
+            <button onclick="selectLevel(2)" id="level-2" class="level-btn px-6 py-3 border border-slate-400 rounded-3xl font-medium">Продвинутый</button>
+        </div>
+        <div id="lessons-grid" class="grid md:grid-cols-2 lg:grid-cols-3 gap-6"></div>
+    </section>
+
+    <!-- ДОРАМЫ -->
+    <section id="dramas-section" class="max-w-7xl mx-auto px-6 py-16 hidden">
+        <h2 class="text-4xl font-bold mb-2">Дорамы</h2>
+        <p class="text-slate-400 mb-10">Алхимия душ • Алые сердца: Корё • С транскрипцией и переводом</p>
+        <div id="dramas-grid" class="grid md:grid-cols-2 lg:grid-cols-3 gap-8"></div>
+    </section>
+
+    <!-- STREAK -->
+    <section id="streak-section" class="max-w-7xl mx-auto px-6 py-20 hidden text-center">
+        <div class="max-w-md mx-auto">
+            <i class="fas fa-fire text-9xl text-orange-400 mb-8"></i>
+            <h2 class="text-5xl font-bold mb-4">Твоя серия</h2>
+            <div id="big-streak" class="text-8xl font-bold text-orange-400">0</div>
+            <p class="text-2xl text-slate-300">дней подряд</p>
+            <p class="mt-10 text-slate-400">Не пропускай день — серия растёт!<br>Пропуск = сброс 🔥</p>
+        </div>
+    </section>
+
+    <!-- МОДАЛЬ ДОРАМЫ -->
+    <div id="drama-modal" class="hidden fixed inset-0 bg-black/90 z-[9999] flex items-center justify-center">
+        <div class="bg-slate-900 w-full max-w-6xl mx-4 rounded-3xl overflow-hidden flex flex-col md:flex-row">
             <div class="flex-1">
-                <div class="aspect-video bg-black">
-                    <iframe id="drama-player" width="100%" height="100%" frameborder="0" allowfullscreen></iframe>
-                </div>
+                <iframe id="drama-player" class="w-full aspect-video" frameborder="0" allowfullscreen></iframe>
             </div>
-            
-            <!-- Панель словаря с транскрипцией -->
-            <div class="w-full md:w-96 bg-slate-800 p-6 flex flex-col">
-                <h3 class="font-semibold text-lg mb-4 flex items-center gap-2">
-                    <span>Словарь из дорамы</span>
-                    <span class="text-xs bg-teal-500 px-2 py-0.5 rounded">с транскрипцией</span>
-                </h3>
-                
-                <div id="vocab-list" class="flex-1 space-y-3 overflow-y-auto pr-2">
-                    <!-- Заполняется JS -->
-                </div>
-                
-                <button onclick="hideDramaModal()" 
-                        class="mt-6 w-full py-4 bg-white text-slate-900 rounded-3xl font-semibold">
-                    Закрыть
-                </button>
+            <div class="w-full md:w-96 p-6 bg-slate-800 overflow-y-auto">
+                <h3 class="font-bold text-xl mb-4">Словарь из дорамы <span class="text-[#00c4b4]">(с транскрипцией)</span></h3>
+                <div id="vocab-list" class="space-y-4"></div>
+                <button onclick="hideDramaModal()" class="mt-8 w-full py-4 bg-white text-slate-900 rounded-3xl font-semibold">Закрыть плеер</button>
             </div>
         </div>
     </div>
 
+    <!-- МОДАЛЬ АВТОРИЗАЦИИ -->
+    <div id="auth-modal" class="hidden fixed inset-0 bg-black/70 flex items-center justify-center z-[9999]">
+        <div class="bg-white text-slate-900 rounded-3xl p-8 max-w-md w-full mx-4">
+            <h3 class="text-2xl font-bold mb-6 text-center">Присоединяйся к K-Learn</h3>
+            <input id="user-name" type="text" placeholder="Твоё имя" class="w-full px-5 py-4 border rounded-3xl mb-4">
+            <button onclick="registerUser()" class="w-full bg-[#00c4b4] py-4 rounded-3xl text-white font-semibold mb-4">Зарегистрироваться</button>
+            <button onclick="loginDemo()" class="w-full border border-slate-300 py-4 rounded-3xl font-semibold">Войти как гость</button>
+            <button onclick="hideAuthModal()" class="mt-6 text-slate-400 w-full">Закрыть</button>
+        </div>
+    </div>
+
     <script>
-        // === ДОРАМЫ С ТРАНСКРИПЦИЕЙ ===
+        let currentUser = null;
+        let currentStreak = 5; // демо
+
+        // Дорамы с VK и YouTube ссылками
         const dramasData = [
             {
                 id: 1,
-                title: "Алхимия душ",
+                title: "Алхимия душ (1 сезон)",
                 koreanTitle: "환혼",
-                level: 2,
-                description: "Средний уровень • Русские субтитры",
-                embed: "https://www.youtube.com/embed/videoseries?list=PLXmS7Ry-YYvjAmGdp3jzGWxNSlAIK-cJw",
+                level: "Средний",
+                embed: "https://vkvideo.ru/playlist/-176294899_93",   // VK плейлист
                 vocab: [
-                    { ko: "환혼", trans: "Hwan-hon", ru: "алхимия душ / переселение душ" },
+                    { ko: "환혼", trans: "Hwan-hon", ru: "переселение душ" },
                     { ko: "마법", trans: "Mabeop", ru: "магия" },
                     { ko: "영혼", trans: "Yeonghon", ru: "душа" },
-                    { ko: "운명", trans: "Unmyeong", ru: "судьба" },
-                    { ko: "주술", trans: "Jusul", ru: "колдовство, заклинание" }
+                    { ko: "운명", trans: "Unmyeong", ru: "судьба" }
                 ]
             },
             {
                 id: 2,
                 title: "Алые сердца: Корё",
                 koreanTitle: "달의 연인 - 보령",
-                level: 2,
-                description: "Средний уровень • Русские субтитры",
-                embed: "https://www.youtube.com/playlist?list=PLV3Rowp-9vnkB6veJdCEEpet_tuI8uod3",
+                level: "Средний",
+                embed: "https://vkvideo.ru/playlist/-160537782_191",   // VK плейлист
                 vocab: [
                     { ko: "사랑", trans: "Sarang", ru: "любовь" },
                     { ko: "왕자", trans: "Wangja", ru: "принц" },
                     { ko: "궁", trans: "Gung", ru: "дворец" },
-                    { ko: "역사", trans: "Yeoksa", ru: "история" },
                     { ko: "시간여행", trans: "Siganyeohaeng", ru: "путешествие во времени" }
                 ]
             },
@@ -141,40 +161,38 @@
                 id: 3,
                 title: "Алхимия душ 2",
                 koreanTitle: "환혼: 빛과 그림자",
-                level: 3,
-                description: "Продвинутый уровень • Корейские субтитры",
-                embed: "https://www.youtube.com/watch?v=ipxBGdplzZI",
+                level: "Продвинутый",
+                embed: "https://vkvideo.ru/playlist/-204634618_96",
                 vocab: [
                     { ko: "빛", trans: "Bit", ru: "свет" },
                     { ko: "그림자", trans: "Geurimja", ru: "тень" },
-                    { ko: "복수", trans: "Boksu", ru: "месть" },
-                    { ko: "강력한", trans: "Gangnyeokhan", ru: "сильный, мощный" }
+                    { ko: "복수", trans: "Boksu", ru: "месть" }
                 ]
             }
         ];
 
+        function calculateStreak() {
+            currentStreak = parseInt(localStorage.getItem('klearn_streak') || '5');
+            document.getElementById('streak-count').textContent = currentStreak;
+            document.getElementById('home-streak').textContent = currentStreak + " дней";
+            document.getElementById('big-streak').textContent = currentStreak;
+        }
+
         function renderDramas() {
             const container = document.getElementById('dramas-grid');
             container.innerHTML = '';
-
-            dramasData.forEach(drama => {
+            dramasData.forEach(d => {
                 const card = document.createElement('div');
                 card.className = "bg-slate-800 rounded-3xl overflow-hidden card-hover cursor-pointer";
                 card.innerHTML = `
-                    <div class="aspect-video bg-gradient-to-br from-slate-700 to-black flex items-center justify-center text-7xl relative">
-                        📺
-                        <div class="absolute top-4 right-4 px-4 py-1 text-xs font-bold rounded-3xl bg-[#00c4b4]">
-                            ${drama.level === 2 ? 'Средний' : 'Продвинутый'}
-                        </div>
-                    </div>
+                    <div class="aspect-video bg-black flex items-center justify-center text-6xl">📺</div>
                     <div class="p-6">
-                        <h3 class="font-semibold text-xl">${drama.title}</h3>
-                        <p class="text-sm text-slate-400">${drama.koreanTitle}</p>
-                        <p class="text-xs text-slate-500 mt-4">${drama.description}</p>
-                        
-                        <button onclick="event.stopImmediatePropagation(); playDrama(${drama.id});" 
-                                class="mt-6 w-full bg-white text-slate-900 py-4 rounded-3xl font-semibold flex items-center justify-center gap-x-2">
-                            <i class="fas fa-play"></i> Смотреть + учить слова
+                        <h3 class="font-semibold text-xl">${d.title}</h3>
+                        <p class="text-slate-400">${d.koreanTitle}</p>
+                        <p class="text-xs text-[#00c4b4] mt-2">${d.level}</p>
+                        <button onclick="event.stopImmediatePropagation(); playDrama(${d.id});" 
+                                class="mt-6 w-full bg-white text-slate-900 py-3.5 rounded-3xl font-medium">
+                            Смотреть + словарь
                         </button>
                     </div>
                 `;
@@ -184,35 +202,21 @@
 
         function playDrama(id) {
             const drama = dramasData.find(d => d.id === id);
-            if (!drama) return;
-
-            // Открываем плеер
             document.getElementById('drama-player').src = drama.embed;
 
-            // Заполняем словарь с транскрипцией
-            const vocabContainer = document.getElementById('vocab-list');
-            vocabContainer.innerHTML = '';
-
-            drama.vocab.forEach(word => {
-                const div = document.createElement('div');
-                div.className = "vocab-item bg-slate-700 rounded-2xl p-4";
-                div.innerHTML = `
-                    <div class="flex justify-between items-start">
-                        <div>
-                            <div class="korean-font text-2xl font-medium">${word.ko}</div>
-                            <div class="text-teal-400 text-sm mt-1">${word.trans}</div>
-                            <div class="text-slate-300 text-sm mt-2">${word.ru}</div>
-                        </div>
-                        <button onclick="event.stopImmediatePropagation(); alert('✅ Слово «${word.ko}» добавлено в твой словарь!');" 
-                                class="text-[#00c4b4] text-2xl hover:scale-110 transition">
-                            <i class="fas fa-plus-circle"></i>
-                        </button>
-                    </div>
+            const vocabDiv = document.getElementById('vocab-list');
+            vocabDiv.innerHTML = '';
+            drama.vocab.forEach(w => {
+                const item = document.createElement('div');
+                item.className = "bg-slate-700 rounded-2xl p-4";
+                item.innerHTML = `
+                    <div class="korean-font text-2xl">${w.ko}</div>
+                    <div class="text-teal-400 text-sm">${w.trans}</div>
+                    <div class="text-slate-300 mt-1">${w.ru}</div>
                 `;
-                vocabContainer.appendChild(div);
+                vocabDiv.appendChild(item);
             });
 
-            // Показываем модальное окно
             document.getElementById('drama-modal').classList.remove('hidden');
             document.getElementById('drama-modal').classList.add('flex');
         }
@@ -221,21 +225,51 @@
             const modal = document.getElementById('drama-modal');
             modal.classList.add('hidden');
             modal.classList.remove('flex');
-            document.getElementById('drama-player').src = ''; // очищаем плеер
+            document.getElementById('drama-player').src = '';
         }
 
-        // Простая заглушка для других функций
         function navigateTo(section) {
-            alert(`Раздел "${section}" скоро будет доступен.\n\nСейчас активно: Дорамы с транскрипцией!`);
+            document.querySelectorAll('section').forEach(s => s.classList.add('hidden'));
+            document.getElementById(section + '-section').classList.remove('hidden');
+            if (section === 'dramas') renderDramas();
         }
-        function showStreakModal() { alert("🔥 Твоя серия: 7 дней! Продолжай в том же духе!"); }
-        function toggleProfile() { alert("👋 Привет! Это демо-версия."); }
-        function showAuthModal() { alert("Регистрация пока в разработке.\nИспользуй демо-режим."); }
 
-        // Запуск сайта
+        function selectLevel(lvl) {
+            document.querySelectorAll('.level-btn').forEach(b => b.classList.remove('active', 'bg-white', 'text-slate-900'));
+            document.getElementById('level-' + lvl).classList.add('active', 'bg-white', 'text-slate-900');
+            // Здесь можно добавить реальные уроки по уровням
+            alert(`Уровень ${lvl === 0 ? 'Начальный' : lvl === 1 ? 'Средний' : 'Продвинутый'} выбран. Уроки скоро будут добавлены!`);
+        }
+
+        function showAuthModal() { document.getElementById('auth-modal').classList.remove('hidden'); }
+        function hideAuthModal() { document.getElementById('auth-modal').classList.add('hidden'); }
+        function registerUser() {
+            const name = document.getElementById('user-name').value || "Арууке";
+            currentUser = { name };
+            localStorage.setItem('klearn_user', JSON.stringify(currentUser));
+            hideAuthModal();
+            document.getElementById('username-display').textContent = name;
+            document.getElementById('login-btn').classList.add('hidden');
+        }
+        function loginDemo() {
+            currentUser = { name: "Арууке" };
+            hideAuthModal();
+            document.getElementById('username-display').textContent = "Арууке";
+            document.getElementById('login-btn').classList.add('hidden');
+        }
+        function toggleProfile() {
+            if (currentUser) alert(`Привет, ${currentUser.name}! 🔥`);
+            else showAuthModal();
+        }
+        function showStreakModal() {
+            alert(`🔥 Твоя текущая серия — ${currentStreak} дней!\n\nПродолжай учить каждый день!`);
+        }
+
+        // Запуск
         window.onload = () => {
-            renderDramas();
-            console.log('%c✅ K-Learn обновлён: Добавлена транскрипция к корейским словам!', 'color:#00c4b4; font-size:14px');
+            calculateStreak();
+            navigateTo('home');
+            console.log('%c✅ Полный сайт K-Learn загружен! Дорамы с VK Video + транскрипция', 'color:#00c4b4; font-size:14px');
         };
     </script>
 </body>
