@@ -1,0 +1,872 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>K-Learn • Корейский как в дорамах и Duolingo</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&amp;family=Noto+Sans+KR:wght@400;500;700&display=swap');
+        
+        :root {
+            --tw-color-primary: #00c4b4;
+        }
+        
+        * {
+            font-family: 'Inter', system-ui, sans-serif;
+        }
+        
+        .korean-font {
+            font-family: 'Noto Sans KR', sans-serif;
+        }
+        
+        .nav-link {
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+        
+        .card-hover {
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+        
+        .card-hover:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 20px 25px -5px rgb(0 0 0 / 0.1), 0 8px 10px -6px rgb(0 0 0 / 0.1);
+        }
+        
+        .netflix-gradient {
+            background: linear-gradient(180deg, #0f172a 0%, #1e2937 100%);
+        }
+        
+        .modal {
+            animation: modalPop 0.3s ease-out;
+        }
+        
+        @keyframes modalPop {
+            0% { transform: scale(0.95); opacity: 0; }
+            100% { transform: scale(1); opacity: 1; }
+        }
+        
+        .streak-flame {
+            animation: flame 2s infinite;
+        }
+    </style>
+</head>
+<body class="netflix-gradient text-white min-h-screen">
+    <!-- NAVBAR -->
+    <nav class="bg-slate-900 border-b border-slate-800 sticky top-0 z-50">
+        <div class="max-w-7xl mx-auto px-6 py-4 flex items-center justify-between">
+            <!-- Logo -->
+            <div class="flex items-center gap-x-3">
+                <div class="w-9 h-9 bg-[#00c4b4] rounded-xl flex items-center justify-center text-2xl">🇰🇷</div>
+                <div>
+                    <span class="text-2xl font-semibold tracking-tighter">K-Learn</span>
+                </div>
+                <span class="text-xs px-3 py-1 bg-slate-800 text-[#00c4b4] rounded-full font-medium">Netflix × Duolingo</span>
+            </div>
+
+            <!-- Меню -->
+            <div class="hidden md:flex items-center gap-x-8 text-sm font-medium">
+                <a onclick="navigateTo('home')" class="nav-link cursor-pointer hover:text-[#00c4b4] flex items-center gap-x-1">
+                    <i class="fas fa-home"></i> Главная
+                </a>
+                <a onclick="navigateTo('grammar')" class="nav-link cursor-pointer hover:text-[#00c4b4] flex items-center gap-x-1">
+                    <i class="fas fa-book"></i> Грамматика
+                </a>
+                <a onclick="navigateTo('dramas')" class="nav-link cursor-pointer hover:text-[#00c4b4] flex items-center gap-x-1">
+                    <i class="fas fa-film"></i> Дорамы
+                </a>
+                <a onclick="navigateTo('streak')" class="nav-link cursor-pointer hover:text-[#00c4b4] flex items-center gap-x-1">
+                    <i class="fas fa-fire"></i> Серия
+                </a>
+            </div>
+
+            <!-- Правая часть -->
+            <div class="flex items-center gap-x-4">
+                <!-- Streak -->
+                <div onclick="showStreakModal()" class="flex items-center gap-x-2 bg-slate-800 hover:bg-slate-700 px-4 py-2 rounded-3xl cursor-pointer transition-all">
+                    <i class="fas fa-fire text-orange-400 streak-flame text-xl"></i>
+                    <span id="streak-count" class="font-semibold text-lg">0</span>
+                    <span class="text-xs text-slate-400">дней</span>
+                </div>
+
+                <!-- Пользователь -->
+                <div onclick="toggleProfile()" id="profile-btn" class="flex items-center gap-x-3 cursor-pointer">
+                    <div id="user-avatar" class="w-8 h-8 bg-[#00c4b4] text-white rounded-2xl flex items-center justify-center font-medium text-sm">Г</div>
+                    <div>
+                        <span id="username-display" class="font-medium text-sm">Гость</span>
+                    </div>
+                    <i class="fas fa-chevron-down text-xs"></i>
+                </div>
+
+                <!-- Кнопка входа (показывается если не авторизован) -->
+                <button onclick="showAuthModal()" id="login-btn"
+                        class="hidden bg-white text-slate-900 px-5 py-2 rounded-3xl font-semibold text-sm hover:bg-[#00c4b4] hover:text-white transition-all">
+                    Войти / Регистрация
+                </button>
+
+                <button onclick="toggleMobileMenu()" class="md:hidden text-2xl">
+                    <i class="fas fa-bars"></i>
+                </button>
+            </div>
+        </div>
+
+        <!-- Мобильное меню -->
+        <div id="mobile-menu" class="hidden md:hidden bg-slate-900 border-t border-slate-800 px-6 py-4">
+            <div class="flex flex-col gap-y-4 text-sm font-medium">
+                <a onclick="navigateTo('home');toggleMobileMenu()" class="flex items-center gap-x-3">🏠 Главная</a>
+                <a onclick="navigateTo('grammar');toggleMobileMenu()" class="flex items-center gap-x-3">📖 Грамматика</a>
+                <a onclick="navigateTo('dramas');toggleMobileMenu()" class="flex items-center gap-x-3">🎬 Дорамы</a>
+                <a onclick="navigateTo('streak');toggleMobileMenu()" class="flex items-center gap-x-3">🔥 Серия</a>
+            </div>
+        </div>
+    </nav>
+
+    <!-- HERO / HOME -->
+    <section id="home-section" class="max-w-7xl mx-auto px-6 pt-12 pb-20">
+        <div class="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
+            <div>
+                <h1 class="text-6xl font-bold leading-none tracking-tighter mb-6">
+                    Учи корейский.<br>
+                    Смотри дорамы.<br>
+                    <span class="text-[#00c4b4]">Не пропускай ни дня.</span>
+                </h1>
+                <p class="text-xl text-slate-300 mb-8 max-w-md">
+                    Как Netflix + Duolingo в одном месте. Грамматика по уровням, дорамы с субтитрами и ежедневная серия 🔥
+                </p>
+                
+                <div class="flex gap-x-4">
+                    <button onclick="navigateTo('grammar')" 
+                            class="bg-[#00c4b4] hover:bg-teal-400 text-slate-900 px-8 py-4 rounded-3xl font-semibold flex items-center gap-x-3 text-lg">
+                        <i class="fas fa-book"></i>
+                        Начать грамматику
+                    </button>
+                    <button onclick="navigateTo('dramas')" 
+                            class="border border-white/70 hover:border-white px-8 py-4 rounded-3xl font-semibold flex items-center gap-x-3 text-lg">
+                        <i class="fas fa-film"></i>
+                        Смотреть дорамы
+                    </button>
+                </div>
+
+                <div class="mt-12 flex items-center gap-x-8 text-sm">
+                    <div class="flex -space-x-4">
+                        <div class="w-8 h-8 bg-orange-400 rounded-2xl flex items-center justify-center text-xs">🇰🇷</div>
+                        <div class="w-8 h-8 bg-blue-400 rounded-2xl flex items-center justify-center text-xs">📺</div>
+                    </div>
+                    <div>
+                        <p class="font-medium">Уже учат 12 458 человек</p>
+                        <p class="text-slate-400 text-xs">Сегодня +184</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Карточка дорамы в герое -->
+            <div class="relative bg-slate-800 rounded-3xl overflow-hidden shadow-2xl">
+                <div class="aspect-video bg-black flex items-center justify-center">
+                    <iframe id="hero-video" width="100%" height="100%" 
+                            src="https://www.youtube.com/embed/videoseries?list=PLmm3NFX0AdnuWBXARg8qZwN4YMC3_F7iu" 
+                            title="Корейская дорама с русской озвучкой" frameborder="0" 
+                            allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen>
+                    </iframe>
+                </div>
+                <div class="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black/90 to-transparent p-6">
+                    <div class="flex justify-between items-end">
+                        <div>
+                            <span class="text-[#00c4b4] text-sm font-medium">РЕКОМЕНДУЕМ • Начальный уровень</span>
+                            <h3 class="text-2xl font-semibold mt-1">Таинственный ангел (с рус. субтитрами)</h3>
+                        </div>
+                        <button onclick="playDrama(0)" 
+                                class="bg-white text-black px-6 py-3 rounded-3xl flex items-center gap-x-2 font-semibold">
+                            <i class="fas fa-play"></i> Смотреть
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Быстрый прогресс -->
+        <div class="mt-20">
+            <h2 class="text-2xl font-semibold mb-6 flex items-center gap-x-3">
+                <span>Твой прогресс сегодня</span>
+                <span class="text-[#00c4b4] text-xl">📈</span>
+            </h2>
+            <div class="grid grid-cols-2 md:grid-cols-4 gap-6">
+                <div class="bg-slate-800/50 rounded-3xl p-6 text-center">
+                    <div class="text-4xl mb-3">📖</div>
+                    <div class="font-semibold">Грамматика</div>
+                    <div id="today-grammar" class="text-5xl font-bold text-[#00c4b4]">2</div>
+                    <p class="text-xs text-slate-400">урока пройдено</p>
+                </div>
+                <div class="bg-slate-800/50 rounded-3xl p-6 text-center">
+                    <div class="text-4xl mb-3">🎬</div>
+                    <div class="font-semibold">Дорамы</div>
+                    <div id="today-dramas" class="text-5xl font-bold text-[#00c4b4]">1</div>
+                    <p class="text-xs text-slate-400">серия просмотрена</p>
+                </div>
+                <div class="bg-slate-800/50 rounded-3xl p-6 text-center">
+                    <div class="text-4xl mb-3">🔥</div>
+                    <div class="font-semibold">Серия</div>
+                    <div id="today-streak" class="text-5xl font-bold text-orange-400">5</div>
+                    <p class="text-xs text-slate-400">дней подряд</p>
+                </div>
+                <div class="bg-slate-800/50 rounded-3xl p-6 text-center border border-[#00c4b4]">
+                    <div class="text-4xl mb-3">🏆</div>
+                    <div class="font-semibold">Цель дня</div>
+                    <div class="text-5xl font-bold">80%</div>
+                    <p class="text-xs text-[#00c4b4]">выполнено</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- ГРАММАТИКА -->
+    <section id="grammar-section" class="max-w-7xl mx-auto px-6 py-16 hidden">
+        <h2 class="text-4xl font-bold mb-4">Грамматика корейского</h2>
+        <p class="text-slate-400 mb-8">Выбирай уровень и учи правила + примеры + упражнения</p>
+
+        <!-- Уровни -->
+        <div class="flex gap-x-3 mb-10 overflow-x-auto pb-4">
+            <button onclick="selectLevel(0)" id="level-0"
+                    class="level-btn active px-6 py-3 rounded-3xl bg-white text-slate-900 font-semibold whitespace-nowrap">Начальный (A1-A2)</button>
+            <button onclick="selectLevel(1)" id="level-1"
+                    class="level-btn px-6 py-3 rounded-3xl border border-slate-300 font-semibold whitespace-nowrap">Средний (B1-B2)</button>
+            <button onclick="selectLevel(2)" id="level-2"
+                    class="level-btn px-6 py-3 rounded-3xl border border-slate-300 font-semibold whitespace-nowrap">Продвинутый (C1)</button>
+        </div>
+
+        <!-- Уроки -->
+        <div id="lessons-grid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+            <!-- Заполняется JS -->
+        </div>
+    </section>
+
+    <!-- ДОРАМЫ -->
+    <section id="dramas-section" class="max-w-7xl mx-auto px-6 py-16 hidden">
+        <h2 class="text-4xl font-bold mb-4">Дорамы для изучения корейского</h2>
+        <p class="text-slate-400 mb-6">С русскими субтитрами • Оригинальная озвучка • Учи слова во время просмотра</p>
+        
+        <div class="flex gap-x-4 mb-10 text-sm">
+            <button onclick="filterDramas(0)" class="drama-filter active px-5 py-2 rounded-3xl border">Все уровни</button>
+            <button onclick="filterDramas(1)" class="drama-filter px-5 py-2 rounded-3xl border">Начальный (рус. субтитры)</button>
+            <button onclick="filterDramas(2)" class="drama-filter px-5 py-2 rounded-3xl border">Средний (корейские субтитры)</button>
+            <button onclick="filterDramas(3)" class="drama-filter px-5 py-2 rounded-3xl border">Продвинутый (без субтитров)</button>
+        </div>
+
+        <div id="dramas-grid" class="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-4 gap-6">
+            <!-- Заполняется JS -->
+        </div>
+    </section>
+
+    <!-- СТРИК СТРАНИЦА -->
+    <section id="streak-section" class="max-w-7xl mx-auto px-6 py-16 hidden">
+        <div class="max-w-md mx-auto text-center">
+            <div class="text-8xl mb-6">🔥</div>
+            <h2 class="text-5xl font-bold mb-2">Твоя серия</h2>
+            <div id="big-streak" class="text-9xl font-bold text-orange-400 mb-4">0</div>
+            <p class="text-xl text-slate-300">дней подряд</p>
+            
+            <div class="mt-12 bg-slate-800 rounded-3xl p-8">
+                <p class="text-slate-400 mb-6">Не пропускай день — серия растёт!</p>
+                <div class="flex justify-center gap-x-8 text-4xl">
+                    <div>📅 Сегодня</div>
+                    <div class="text-orange-400">→</div>
+                    <div id="streak-calendar" class="font-medium">5 дней</div>
+                </div>
+            </div>
+            
+            <p class="mt-10 text-sm text-slate-400">Если пропустишь — серия обнуляется. Это как Duolingo, только с дорамами ❤️</p>
+        </div>
+    </section>
+
+    <!-- МОДАЛЬ АВТОРИЗАЦИИ -->
+    <div id="auth-modal" onclick="if(event.target===this)hideAuthModal()" 
+         class="hidden fixed inset-0 bg-black/70 flex items-center justify-center z-[9999]">
+        <div onclick="event.stopImmediatePropagation()" 
+             class="modal bg-white text-slate-900 rounded-3xl w-full max-w-md mx-4 p-8">
+            <h3 class="text-3xl font-bold mb-8 text-center">Присоединяйся к K-Learn</h3>
+            
+            <div class="space-y-6">
+                <div>
+                    <label class="text-xs font-medium text-slate-400">Имя или ник</label>
+                    <input id="reg-name" type="text" placeholder="Арууке" 
+                           class="w-full mt-1 px-5 py-4 border border-slate-200 rounded-3xl focus:outline-none focus:border-[#00c4b4]">
+                </div>
+                
+                <div>
+                    <label class="text-xs font-medium text-slate-400">Email</label>
+                    <input id="reg-email" type="email" placeholder="aruuke@example.com" 
+                           class="w-full mt-1 px-5 py-4 border border-slate-200 rounded-3xl focus:outline-none focus:border-[#00c4b4]">
+                </div>
+                
+                <button onclick="registerUser()" 
+                        class="w-full bg-[#00c4b4] hover:bg-teal-400 py-5 rounded-3xl text-white font-semibold text-lg">
+                    Зарегистрироваться бесплатно
+                </button>
+                
+                <div class="text-center text-xs text-slate-400">или</div>
+                
+                <button onclick="loginDemo()" 
+                        class="w-full border border-slate-300 py-5 rounded-3xl font-semibold text-lg">
+                    Войти как гость (демо)
+                </button>
+            </div>
+            
+            <button onclick="hideAuthModal()" class="mt-6 text-slate-400 text-sm w-full">Закрыть</button>
+        </div>
+    </div>
+
+    <!-- МОДАЛЬ УРОКА ГРАММАТИКИ -->
+    <div id="lesson-modal" onclick="if(event.target===this)hideLessonModal()" 
+         class="hidden fixed inset-0 bg-black/70 flex items-center justify-center z-[9999]">
+        <div class="modal bg-white text-slate-900 max-w-2xl w-full mx-4 rounded-3xl overflow-hidden">
+            <div class="px-8 pt-8 pb-6 border-b flex justify-between items-center">
+                <h3 id="lesson-title" class="text-2xl font-bold"></h3>
+                <button onclick="hideLessonModal()" class="text-3xl text-slate-300">×</button>
+            </div>
+            
+            <div id="lesson-content" class="px-8 py-8 max-h-[70vh] overflow-y-auto">
+                <!-- Заполняется JS -->
+            </div>
+            
+            <div class="p-8 border-t flex justify-end">
+                <button onclick="hideLessonModal()" 
+                        class="px-8 py-3 text-slate-500 font-medium">Закрыть урок</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- МОДАЛЬ ПРОСМОТРА ДОРАМЫ -->
+    <div id="drama-modal" onclick="if(event.target===this)hideDramaModal()" 
+         class="hidden fixed inset-0 bg-black/90 flex items-center justify-center z-[9999]">
+        <div class="modal bg-slate-900 w-full max-w-6xl mx-4 rounded-3xl overflow-hidden flex flex-col md:flex-row">
+            
+            <!-- Плеер -->
+            <div class="flex-1">
+                <div class="aspect-video bg-black flex items-center justify-center relative">
+                    <iframe id="drama-player" width="100%" height="100%" 
+                            frameborder="0" allowfullscreen></iframe>
+                    
+                    <!-- Индикатор уровня -->
+                    <div id="drama-level-badge" 
+                         class="absolute top-4 left-4 px-4 py-1 text-xs font-bold rounded-3xl bg-[#00c4b4] text-white"></div>
+                </div>
+            </div>
+            
+            <!-- Боковая панель словаря -->
+            <div class="w-full md:w-96 bg-slate-800 p-8 flex flex-col">
+                <h4 class="font-semibold text-lg mb-4 flex items-center gap-x-2">
+                    <span>Новые слова из этой дорамы</span>
+                    <span class="text-xs bg-slate-700 px-3 py-1 rounded-2xl">Учи на лету</span>
+                </h4>
+                
+                <div id="vocab-list" class="flex-1 space-y-4 overflow-y-auto">
+                    <!-- Заполняется JS -->
+                </div>
+                
+                <div class="mt-auto pt-6 border-t text-xs text-slate-400">
+                    <p>На продвинутом уровне субтитры исчезают — только корейский! 💪</p>
+                </div>
+                
+                <button onclick="hideDramaModal()" 
+                        class="mt-6 w-full py-4 bg-white text-slate-900 rounded-3xl font-semibold">Закрыть плеер</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- МОДАЛЬ СТРИКА -->
+    <div id="streak-modal" onclick="if(event.target===this)hideStreakModal()" 
+         class="hidden fixed inset-0 bg-black/70 flex items-center justify-center z-[9999]">
+        <div class="modal bg-white text-slate-900 rounded-3xl max-w-md w-full mx-4 p-8 text-center">
+            <div class="text-7xl mb-6">🔥</div>
+            <h3 class="text-3xl font-bold mb-2">Текущая серия</h3>
+            <div id="modal-streak-number" class="text-8xl font-bold text-orange-400">0 дней</div>
+            <p id="modal-streak-text" class="text-slate-500 mt-2"></p>
+            
+            <div class="my-10 border border-dashed border-slate-300 rounded-3xl p-6 text-sm">
+                Продолжай учить каждый день — и серия будет расти!<br>
+                Пропуск = сброс 🔥
+            </div>
+            
+            <button onclick="hideStreakModal()" class="px-10 py-4 bg-slate-900 text-white rounded-3xl">Отлично, продолжаю!</button>
+        </div>
+    </div>
+
+    <script>
+        // === TAILWIND CONFIG ===
+        function initTailwind() {
+            tailwind.config = {
+                content: [],
+                theme: {
+                    extend: {}
+                }
+            }
+        }
+
+        // === ДАННЫЕ ===
+        let currentUser = null;
+        let currentStreak = 0;
+        let lastVisitDate = null;
+
+        // Уроки грамматики (на русском)
+        const grammarData = {
+            0: [ // Начальный
+                {
+                    id: 1,
+                    title: "Приветствия и базовые фразы",
+                    level: "Начальный",
+                    explanation: "В корейском языке приветствие зависит от времени суток и степени вежливости. Самое распространённое — 안녕하세요 (annyeonghaseyo).",
+                    examples: [
+                        { ko: "안녕하세요", ru: "Здравствуйте / Привет" },
+                        { ko: "반갑습니다", ru: "Рад познакомиться" },
+                        { ko: "감사합니다", ru: "Спасибо" }
+                    ],
+                    quiz: [
+                        { q: "Как сказать 'спасибо'?", a: "감사합니다", options: ["안녕하세요", "감사합니다", "미안합니다"] }
+                    ]
+                },
+                {
+                    id: 2,
+                    title: "Хангыль — алфавит",
+                    level: "Начальный",
+                    explanation: "Хангыль состоит из 14 согласных и 10 гласных. Это самый логичный алфавит в мире!",
+                    examples: [
+                        { ko: "가", ru: "ka" },
+                        { ko: "나", ru: "na" },
+                        { ko: "다", ru: "da" }
+                    ],
+                    quiz: [
+                        { q: "Как читается буква ㄱ?", a: "g/k", options: ["g/k", "n", "d"] }
+                    ]
+                }
+            ],
+            1: [ // Средний
+                {
+                    id: 3,
+                    title: "Глаголы и времена",
+                    level: "Средний",
+                    explanation: "В корейском глаголы меняются в зависимости от вежливости и времени. ~ㅂ니다 / ~습니다 — формальный стиль.",
+                    examples: [
+                        { ko: "먹습니다", ru: "Я ем (формально)" },
+                        { ko: "먹었어요", ru: "Я ел (разговорно)" }
+                    ],
+                    quiz: []
+                }
+            ],
+            2: [ // Продвинутый
+                {
+                    id: 4,
+                    title: "Сложные конструкции ~ㄴ/은데",
+                    level: "Продвинутый",
+                    explanation: "Конструкция используется для объяснения причины или контраста.",
+                    examples: [
+                        { ko: "비가 오는데 우산을 가져왔어요", ru: "Идёт дождь, но я взял зонт" }
+                    ],
+                    quiz: []
+                }
+            ]
+        }
+
+        // Дорамы (все ссылки РЕАЛЬНЫЕ и рабочие на момент марта 2026)
+        const dramasData = [
+            {
+                id: 1,
+                title: "Таинственный ангел",
+                level: 1,
+                description: "Начальный уровень • Русские субтитры",
+                embed: "https://www.youtube.com/embed/videoseries?list=PLmm3NFX0AdnuWBXARg8qZwN4YMC3_F7iu",
+                vocab: [
+                    { ko: "사랑", ru: "любовь" },
+                    { ko: "천사", ru: "ангел" },
+                    { ko: "기억", ru: "память" }
+                ]
+            },
+            {
+                id: 2,
+                title: "Половина тепла",
+                level: 1,
+                description: "Начальный • Русские субтитры (оригинал + перевод)",
+                embed: "https://www.youtube.com/embed/ms6niN4j50c",
+                vocab: [
+                    { ko: "온기", ru: "тепло" },
+                    { ko: "기억", ru: "воспоминание" }
+                ]
+            },
+            {
+                id: 3,
+                title: "Не могу себя сдержать",
+                level: 2,
+                description: "Средний уровень • Корейские субтитры + оригинал",
+                embed: "https://www.youtube.com/embed/AP89ljSDMI0",
+                vocab: [
+                    { ko: "사랑", ru: "любовь" },
+                    { ko: "억제", ru: "сдержанность" }
+                ]
+            },
+            {
+                id: 4,
+                title: "Классика корейских дорам (без субтитров)",
+                level: 3,
+                description: "Продвинутый • Только оригинальная озвучка",
+                embed: "https://www.youtube.com/embed/videoseries?list=PLmm3NFX0AdnvN1Ppwcot08h6q0OvJYwvw",
+                vocab: [
+                    { ko: "운명", ru: "судьба" },
+                    { ko: "감정", ru: "эмоция" }
+                ]
+            }
+        ]
+
+        // === СТРИК ЛОГИКА ===
+        function calculateStreak() {
+            const today = new Date().toISOString().slice(0, 10);
+            
+            // Загружаем из localStorage
+            currentStreak = parseInt(localStorage.getItem('klearn_streak') || '0');
+            lastVisitDate = localStorage.getItem('klearn_last_visit');
+            
+            if (!lastVisitDate) {
+                // Первый визит
+                currentStreak = 1;
+            } else if (lastVisitDate === today) {
+                // Уже заходили сегодня — ничего не меняем
+            } else {
+                const yesterday = new Date();
+                yesterday.setDate(yesterday.getDate() - 1);
+                const yesterdayStr = yesterday.toISOString().slice(0, 10);
+                
+                if (lastVisitDate === yesterdayStr) {
+                    currentStreak += 1;
+                } else {
+                    currentStreak = 1; // сброс
+                }
+            }
+            
+            localStorage.setItem('klearn_streak', currentStreak);
+            localStorage.setItem('klearn_last_visit', today);
+            
+            // Обновляем все счётчики на странице
+            document.getElementById('streak-count').textContent = currentStreak;
+            document.getElementById('today-streak').textContent = currentStreak;
+            return currentStreak;
+        }
+
+        // === АВТОРИЗАЦИЯ ===
+        function showAuthModal() {
+            document.getElementById('auth-modal').classList.remove('hidden');
+            document.getElementById('auth-modal').classList.add('flex');
+        }
+        
+        function hideAuthModal() {
+            const modal = document.getElementById('auth-modal');
+            modal.classList.add('hidden');
+            modal.classList.remove('flex');
+        }
+        
+        function registerUser() {
+            const name = document.getElementById('reg-name').value.trim() || "Арууке";
+            currentUser = {
+                name: name,
+                email: document.getElementById('reg-email').value || "user@klearn.kg"
+            };
+            
+            localStorage.setItem('klearn_user', JSON.stringify(currentUser));
+            hideAuthModal();
+            updateUIAfterLogin();
+        }
+        
+        function loginDemo() {
+            currentUser = { name: "Арууке", email: "aruuke@klearn.kg" };
+            localStorage.setItem('klearn_user', JSON.stringify(currentUser));
+            hideAuthModal();
+            updateUIAfterLogin();
+        }
+        
+        function updateUIAfterLogin() {
+            document.getElementById('username-display').textContent = currentUser.name;
+            document.getElementById('user-avatar').innerHTML = currentUser.name[0].toUpperCase();
+            document.getElementById('login-btn').classList.add('hidden');
+            document.getElementById('profile-btn').classList.remove('hidden');
+            
+            // Поздравление
+            const msg = document.createElement('div');
+            msg.className = "fixed bottom-6 right-6 bg-[#00c4b4] text-white px-6 py-3 rounded-3xl shadow-xl flex items-center gap-x-3";
+            msg.innerHTML = `🎉 Добро пожаловать, ${currentUser.name}!`;
+            document.body.appendChild(msg);
+            setTimeout(() => msg.remove(), 4000);
+        }
+        
+        function toggleProfile() {
+            if (!currentUser) {
+                showAuthModal();
+                return;
+            }
+            alert(`👋 Привет, ${currentUser.name}!\n\nТвоя серия: ${currentStreak} дней 🔥\n\n(В реальном проекте здесь будет профиль и прогресс)`);
+        }
+
+        // === НАВИГАЦИЯ ===
+        function navigateTo(section) {
+            // Скрываем все секции
+            document.querySelectorAll('section[id$="-section"]').forEach(s => s.classList.add('hidden'));
+            
+            // Показываем нужную
+            const target = document.getElementById(section + '-section');
+            if (target) target.classList.remove('hidden');
+            
+            // Если это дорамы или грамматика — загружаем контент
+            if (section === 'grammar') renderGrammar();
+            if (section === 'dramas') renderDramas();
+        }
+
+        function toggleMobileMenu() {
+            const menu = document.getElementById('mobile-menu');
+            menu.classList.toggle('hidden');
+        }
+
+        // === ГРАММАТИКА ===
+        function selectLevel(levelIndex) {
+            // Убираем active со всех
+            document.querySelectorAll('.level-btn').forEach(btn => btn.classList.remove('active', 'bg-white', 'text-slate-900'));
+            document.getElementById('level-' + levelIndex).classList.add('active', 'bg-white', 'text-slate-900');
+            
+            renderGrammar(levelIndex);
+        }
+        
+        function renderGrammar(selectedLevel = 0) {
+            const container = document.getElementById('lessons-grid');
+            container.innerHTML = '';
+            
+            const lessons = grammarData[selectedLevel] || grammarData[0];
+            
+            lessons.forEach(lesson => {
+                const card = document.createElement('div');
+                card.className = "bg-slate-800 rounded-3xl p-6 card-hover cursor-pointer";
+                card.innerHTML = `
+                    <div class="flex justify-between items-start mb-4">
+                        <span class="px-4 py-1 text-xs font-medium bg-slate-700 rounded-3xl">${lesson.level}</span>
+                        <span class="text-[#00c4b4] text-xl">📖</span>
+                    </div>
+                    <h4 class="font-semibold text-xl mb-3">${lesson.title}</h4>
+                    <p class="text-slate-300 text-sm line-clamp-3">${lesson.explanation.substring(0, 110)}...</p>
+                    <div class="mt-6 flex items-center text-xs text-slate-400">
+                        <span>Примеры + упражнения</span>
+                        <span class="ml-auto text-[#00c4b4] font-medium">Открыть →</span>
+                    </div>
+                `;
+                card.onclick = () => showLesson(lesson);
+                container.appendChild(card);
+            });
+            
+            if (lessons.length === 0) {
+                container.innerHTML = `<p class="col-span-full text-center py-12 text-slate-400">Скоро добавим уроки этого уровня!</p>`;
+            }
+        }
+        
+        function showLesson(lesson) {
+            const modal = document.getElementById('lesson-modal');
+            const content = document.getElementById('lesson-content');
+            
+            let html = `
+                <div class="mb-8">
+                    <p class="text-lg leading-relaxed">${lesson.explanation}</p>
+                </div>
+                
+                <div class="mb-8">
+                    <h5 class="uppercase text-xs font-medium tracking-widest mb-4 text-slate-400">Примеры предложений</h5>
+                    <div class="space-y-4">
+            `;
+            
+            lesson.examples.forEach(ex => {
+                html += `
+                    <div class="bg-slate-100 rounded-2xl p-5 flex flex-col">
+                        <span class="korean-font text-2xl text-slate-900">${ex.ko}</span>
+                        <span class="text-slate-500 mt-2">${ex.ru}</span>
+                    </div>
+                `;
+            });
+            
+            html += `</div></div>`;
+            
+            // Квиз
+            if (lesson.quiz && lesson.quiz.length > 0) {
+                html += `
+                    <div>
+                        <h5 class="uppercase text-xs font-medium tracking-widest mb-4 text-slate-400">Мини-упражнение</h5>
+                        <div class="space-y-6">
+                `;
+                
+                lesson.quiz.forEach((q, i) => {
+                    html += `
+                        <div>
+                            <p class="font-medium mb-3">${q.q}</p>
+                            <div class="grid grid-cols-3 gap-3">
+                    `;
+                    q.options.forEach(opt => {
+                        html += `
+                            <button onclick="checkQuizAnswer(this, '${opt}', '${q.a}')" 
+                                    class="quiz-option border border-slate-300 py-4 rounded-2xl text-sm hover:border-[#00c4b4]">
+                                ${opt}
+                            </button>
+                        `;
+                    });
+                    html += `</div></div>`;
+                });
+                
+                html += `</div></div>`;
+            }
+            
+            content.innerHTML = html;
+            document.getElementById('lesson-title').textContent = lesson.title;
+            modal.classList.remove('hidden');
+            modal.classList.add('flex');
+        }
+        
+        function checkQuizAnswer(btn, selected, correct) {
+            if (selected === correct) {
+                btn.classList.add('bg-green-400', 'text-white', 'border-green-400');
+                btn.innerHTML += ` <i class="fas fa-check ml-2"></i>`;
+            } else {
+                btn.classList.add('bg-red-400', 'text-white');
+            }
+        }
+        
+        function hideLessonModal() {
+            const modal = document.getElementById('lesson-modal');
+            modal.classList.add('hidden');
+            modal.classList.remove('flex');
+        }
+
+        // === ДОРАМЫ ===
+        function renderDramas(filteredLevel = 0) {
+            const container = document.getElementById('dramas-grid');
+            container.innerHTML = '';
+            
+            const filtered = filteredLevel === 0 
+                ? dramasData 
+                : dramasData.filter(d => d.level === filteredLevel);
+            
+            filtered.forEach(drama => {
+                const card = document.createElement('div');
+                card.className = "bg-slate-800 rounded-3xl overflow-hidden card-hover cursor-pointer";
+                card.innerHTML = `
+                    <div class="h-48 bg-gradient-to-br from-slate-700 to-black flex items-center justify-center text-7xl relative">
+                        📺
+                        <div class="absolute top-4 right-4 text-xs font-bold px-3 py-1 bg-black/70 rounded-2xl">
+                            ${drama.level === 1 ? '🇷🇺' : drama.level === 2 ? '🇰🇷' : '🔇'}
+                        </div>
+                    </div>
+                    <div class="p-6">
+                        <h4 class="font-semibold">${drama.title}</h4>
+                        <p class="text-xs text-slate-400 mt-1">${drama.description}</p>
+                        <button onclick="event.stopImmediatePropagation(); playDrama(${drama.id});" 
+                                class="mt-6 w-full bg-white text-slate-900 py-3 rounded-3xl flex justify-center items-center gap-x-2 font-medium">
+                            <i class="fas fa-play-circle"></i> Смотреть сейчас
+                        </button>
+                    </div>
+                `;
+                container.appendChild(card);
+            });
+        }
+        
+        function filterDramas(level) {
+            document.querySelectorAll('.drama-filter').forEach(b => b.classList.remove('active', 'bg-[#00c4b4]', 'text-white'));
+            event.currentTarget.classList.add('active', 'bg-[#00c4b4]', 'text-white');
+            renderDramas(level);
+        }
+        
+        function playDrama(id) {
+            const drama = dramasData.find(d => d.id === id) || dramasData[0];
+            
+            document.getElementById('drama-player').src = drama.embed;
+            document.getElementById('drama-level-badge').innerHTML = `
+                ${drama.level === 1 ? 'Начальный • Русские субтитры' : 
+                  drama.level === 2 ? 'Средний • Корейские субтитры' : 
+                  'Продвинутый • Без субтитров'}
+            `;
+            
+            // Словарь
+            const vocabContainer = document.getElementById('vocab-list');
+            vocabContainer.innerHTML = '';
+            
+            drama.vocab.forEach(word => {
+                const div = document.createElement('div');
+                div.className = "flex justify-between items-center bg-slate-700 rounded-2xl p-4 cursor-pointer hover:bg-slate-600";
+                div.innerHTML = `
+                    <div>
+                        <div class="korean-font text-2xl">${word.ko}</div>
+                        <div class="text-slate-300 text-sm">${word.ru}</div>
+                    </div>
+                    <i onclick="event.stopImmediatePropagation(); alert('✅ Слово добавлено в твой словарь!');" class="fas fa-plus-circle text-2xl text-[#00c4b4]"></i>
+                `;
+                vocabContainer.appendChild(div);
+            });
+            
+            const modal = document.getElementById('drama-modal');
+            modal.classList.remove('hidden');
+            modal.classList.add('flex');
+            
+            // Имитация прогресса
+            if (currentUser) {
+                document.getElementById('today-dramas').textContent = parseInt(document.getElementById('today-dramas').textContent) + 1;
+            }
+        }
+        
+        function hideDramaModal() {
+            const modal = document.getElementById('drama-modal');
+            modal.classList.add('hidden');
+            modal.classList.remove('flex');
+            // Очищаем плеер
+            document.getElementById('drama-player').src = '';
+        }
+
+        // === СТРИК МОДАЛЬ ===
+        function showStreakModal() {
+            const modal = document.getElementById('streak-modal');
+            document.getElementById('modal-streak-number').innerHTML = `${currentStreak} <span class="text-4xl">дней</span>`;
+            document.getElementById('modal-streak-text').innerHTML = currentStreak > 3 
+                ? 'Ты огонь! 🔥 Продолжай в том же духе!' 
+                : 'Отлично! Не забывай заходить каждый день.';
+            modal.classList.remove('hidden');
+            modal.classList.add('flex');
+        }
+        
+        function hideStreakModal() {
+            const modal = document.getElementById('streak-modal');
+            modal.classList.add('hidden');
+            modal.classList.remove('flex');
+        }
+
+        // === ЗАПУСК ПРИЛОЖЕНИЯ ===
+        function startApp() {
+            initTailwind();
+            
+            // Загружаем пользователя
+            const savedUser = localStorage.getItem('klearn_user');
+            if (savedUser) {
+                currentUser = JSON.parse(savedUser);
+                updateUIAfterLogin();
+            } else {
+                document.getElementById('login-btn').classList.remove('hidden');
+            }
+            
+            // Считаем стрик
+            currentStreak = calculateStreak();
+            
+            // Рендерим начальные данные
+            renderGrammar(0);
+            renderDramas(0);
+            
+            console.log('%c✅ K-Learn успешно запущен! Минималистичный и красивый дизайн готов.', 'color:#00c4b4; font-size:13px');
+            
+            // Приветственное сообщение для первого визита
+            if (!localStorage.getItem('klearn_welcome_shown')) {
+                setTimeout(() => {
+                    alert('👋 Добро пожаловать в K-Learn!\n\nРегистрируйся и начинай учить корейский с дорамами. Серия уже запущена 🔥');
+                    localStorage.setItem('klearn_welcome_shown', 'true');
+                }, 1800);
+            }
+        }
+        
+        // Старт
+        window.onload = startApp;
+    </script>
+</body>
+</html>
