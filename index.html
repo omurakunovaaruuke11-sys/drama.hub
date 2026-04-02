@@ -3,644 +3,211 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>K-Learn • Корейский как Netflix + Duolingo</title>
-    <script src="https://cdn.tailwindcss.com"></script>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <title>K-LEARN — Корейский как Netflix</title>
     <style>
-        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Noto+Sans+KR:wght@400;500;700&display=swap');
-        
-        :root {
-            --primary: #e11d48;
+        /* Общие стили */
+        body, html {
+            margin: 0;
+            padding: 0;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: #050505;
+            color: white;
         }
-        
-        * {
-            transition-property: color, background-color, border-color, text-decoration-color, fill, stroke, transform;
-            transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
-            transition-duration: 200ms;
-        }
-        
-        body {
-            font-family: 'Inter', system-ui, sans-serif;
-        }
-        
-        .korean-font {
-            font-family: 'Noto Sans KR', sans-serif;
-        }
-        
-        .netflix-header {
-            background: linear-gradient(to bottom, rgba(0,0,0,0.9) 0%, rgba(0,0,0,0.7) 100%);
-        }
-        
-        .nav-link {
-            position: relative;
-        }
-        
-        .nav-link:after {
-            content: '';
-            position: absolute;
-            width: 0;
-            height: 3px;
-            bottom: -2px;
-            left: 50%;
-            background-color: #e11d48;
-            transition: all 0.3s ease;
-        }
-        
-        .nav-link:hover:after {
+
+        /* Шапка сайта */
+        header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 20px 50px;
+            background: rgba(0, 0, 0, 0.8);
+            position: fixed;
             width: 100%;
-            left: 0;
+            box-sizing: border-box;
+            z-index: 1000;
         }
-        
-        .section {
-            display: none;
+
+        .logo {
+            font-size: 24px;
+            font-weight: bold;
+            display: flex;
+            align-items: center;
+            gap: 10px;
         }
-        
-        .section.active {
+
+        .logo span {
+            color: #E50914; /* Красный как у Netflix */
+        }
+
+        nav ul {
+            list-style: none;
+            display: flex;
+            gap: 30px;
+            margin: 0;
+            padding: 0;
+        }
+
+        nav a {
+            text-decoration: none;
+            color: #ccc;
+            transition: 0.3s;
+        }
+
+        nav a:hover {
+            color: white;
+        }
+
+        .auth-buttons {
+            display: flex;
+            align-items: center;
+            gap: 20px;
+        }
+
+        .btn-login {
+            background: white;
+            color: black;
+            padding: 8px 20px;
+            border-radius: 5px;
+            text-decoration: none;
+            font-weight: bold;
+        }
+
+        /* Главная секция (Герой) */
+        .hero {
+            height: 100vh;
+            /* Заменил фон на ночной Сеул с затемнением */
+            background: linear-gradient(rgba(0,0,0,0.7), rgba(0,0,0,0.7)), 
+                        url('https://images.unsplash.com/photo-1546706440-20164606771a?q=80&w=2070&auto=format&fit=crop');
+            background-size: cover;
+            background-position: center;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            padding-left: 50px;
+        }
+
+        .hero h1 {
+            font-size: 4rem;
+            max-width: 600px;
+            margin-bottom: 20px;
+            line-height: 1.1;
+        }
+
+        .hero p {
+            font-size: 1.2rem;
+            color: #ddd;
+            margin-bottom: 40px;
+            max-width: 500px;
+        }
+
+        /* Исправленный блок кнопок (чтобы не накладывались) */
+        .hero-controls {
+            display: flex;
+            align-items: center;
+            gap: 25px; /* Четкий отступ между элементами */
+            flex-wrap: wrap; /* Чтобы на мобилках не слипались */
+        }
+
+        .btn-primary {
+            background: white;
+            color: black;
+            padding: 15px 35px;
+            border-radius: 8px;
+            font-size: 1.1rem;
+            font-weight: bold;
+            text-decoration: none;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        /* Карточка текущей дорамы (Алхимия душ) */
+        .current-watch {
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(10px);
+            padding: 10px 20px;
+            border-radius: 10px;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            min-width: 250px;
+        }
+
+        .mini-poster {
+            width: 40px;
+            height: 40px;
+            border-radius: 5px;
+            object-fit: cover;
+        }
+
+        .info-text {
+            font-size: 0.9rem;
+        }
+
+        .info-text b {
             display: block;
+            color: #fff;
         }
-        
-        .card {
-            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+
+        .info-text span {
+            color: #aaa;
         }
-        
-        .card:hover {
-            transform: scale(1.04) translateY(-8px);
-            box-shadow: 0 25px 50px -12px rgb(225 29 72);
-        }
-        
-        .modal-content {
-            animation: modalPop 0.3s ease forwards;
-        }
-        
-        @keyframes modalPop {
-            0% { transform: scale(0.95); opacity: 0; }
-            100% { transform: scale(1); opacity: 1; }
-        }
-        
-        .player-wrapper {
-            position: relative;
-            padding-top: 56.25%;
-        }
-        
-        .player-wrapper iframe {
-            position: absolute;
-            top: 0;
-            left: 0;
+
+        .progress-line {
             width: 100%;
+            height: 4px;
+            background: #444;
+            margin-top: 5px;
+            border-radius: 2px;
+        }
+
+        .progress-fill {
+            width: 65%; /* Прогресс серии */
             height: 100%;
-            border: none;
-        }
-        
-        .streak-flame {
-            animation: flamePulse 1.5s infinite alternate ease-in-out;
-        }
-        
-        .hero-bg {
-            background: linear-gradient(rgba(0,0,0,0.6), rgba(0,0,0,0.8)), url('https://picsum.photos/id/1015/1920/1080') center/cover no-repeat;
+            background: #E50914;
         }
     </style>
 </head>
-<body class="bg-zinc-950 text-white min-h-screen">
-    <nav class="netflix-header border-b border-zinc-800 sticky top-0 z-50 backdrop-blur-lg">
-        <div class="max-w-screen-2xl mx-auto px-8 py-5 flex items-center justify-between">
-            <div class="flex items-center gap-x-3">
-                <div class="w-11 h-11 bg-gradient-to-br from-rose-600 to-red-500 rounded-3xl flex items-center justify-center text-4xl shadow-inner">🇰🇷</div>
-                <div class="flex flex-col">
-                    <span class="text-4xl font-black tracking-[-3px] leading-none">K-LEARN</span>
-                    <span class="text-[10px] font-medium text-zinc-400 -mt-1 tracking-[1px]">NETFLIX × DUOLINGO</span>
-                </div>
-            </div>
+<body>
 
-            <div class="flex items-center gap-x-10 text-base font-medium">
-                <a onclick="navigateTo('home')" class="nav-link cursor-pointer flex items-center gap-x-2 hover:text-rose-400">
-                    <i class="fa-solid fa-house"></i>
-                    <span>Главная</span>
-                </a>
-                <a onclick="navigateTo('grammar')" class="nav-link cursor-pointer flex items-center gap-x-2 hover:text-rose-400">
-                    <i class="fa-solid fa-book-open"></i>
-                    <span>Грамматика</span>
-                </a>
-                <a onclick="navigateTo('doramas')" class="nav-link cursor-pointer flex items-center gap-x-2 hover:text-rose-400">
-                    <i class="fa-solid fa-tv"></i>
-                    <span>Дорамы</span>
-                </a>
-                <a onclick="navigateTo('profile')" class="nav-link cursor-pointer flex items-center gap-x-2 hover:text-rose-400">
-                    <i class="fa-solid fa-user-circle"></i>
-                    <span>Профиль</span>
-                </a>
-            </div>
-
-            <div class="flex items-center gap-x-6">
-                <div onclick="navigateTo('profile')" class="flex items-center gap-x-3 bg-zinc-900/80 hover:bg-zinc-800 px-6 py-3 rounded-3xl cursor-pointer border border-zinc-700 hover:border-amber-400">
-                    <div class="streak-flame text-3xl">🔥</div>
-                    <div class="text-center">
-                        <span id="streak-count" class="text-2xl font-bold text-amber-400">12</span>
-                        <span class="text-xs text-zinc-400 block -mt-1">дней подряд</span>
-                    </div>
-                </div>
-
-                <div id="user-info" onclick="navigateTo('profile')" class="hidden items-center gap-x-3 cursor-pointer">
-                    <div class="text-right">
-                        <div id="username-display" class="font-semibold"></div>
-                        <div id="level-display" class="text-xs bg-emerald-500 text-black px-3 py-px rounded-full inline-block">Уровень 7</div>
-                    </div>
-                    <div class="w-10 h-10 bg-gradient-to-br from-purple-500 to-rose-500 rounded-2xl flex items-center justify-center text-2xl ring-2 ring-offset-2 ring-offset-zinc-950 ring-rose-400">👩‍🚀</div>
-                </div>
-
-                <button onclick="showAuthModal()" 
-                        id="auth-button"
-                        class="px-8 py-3 bg-white text-black font-semibold rounded-3xl hover:bg-amber-300 flex items-center gap-x-2 text-sm uppercase tracking-widest">
-                    <i class="fa-solid fa-circle-user"></i>
-                    <span>Войти</span>
-                </button>
-            </div>
+    <header>
+        <div class="logo"><span>KR</span> K-LEARN</div>
+        <nav>
+            <ul>
+                <li><a href="index.html">Главная</a></li>
+                <li><a href="grammar.html">Грамматика</a></li>
+                <li><a href="dramas.html">Дорамы</a></li>
+                <li><a href="profile.html">Профиль</a></li>
+            </ul>
+        </nav>
+        <div class="auth-buttons">
+            <div class="streak">🔥 2 дня</div>
+            <a href="#" class="btn-login">ВОЙТИ</a>
         </div>
-    </nav>
+    </header>
 
-    <div id="home" class="section active">
-        <div class="hero-bg h-screen flex items-center relative">
-            <div class="max-w-screen-2xl mx-auto px-8 z-10">
-                <div class="max-w-xl">
-                    <div class="inline-flex items-center gap-2 bg-white/10 backdrop-blur-md px-5 py-2 rounded-3xl text-sm mb-6">
-                        🔥 Тренд №1 • Алхимия душ
-                    </div>
-                    <h1 class="text-7xl font-black leading-none tracking-tighter mb-6">Изучай корейский<br>через лучшие дорамы</h1>
-                    <p class="text-xl text-zinc-300 mb-10">Грамматика + живые диалоги + ежедневный streak.<br>Минималистично. Красиво. Эффективно.</p>
-                    
-                    <div class="flex gap-4">
-                        <button onclick="navigateTo('grammar')" 
-                                class="px-10 py-5 bg-white text-black font-semibold text-xl rounded-3xl flex items-center gap-x-3 hover:scale-105 active:scale-95">
-                            <i class="fa-solid fa-book"></i>
-                            Начать уроки
-                        </button>
-                        <button onclick="navigateTo('doramas')" 
-                                class="px-10 py-5 border-2 border-white font-semibold text-xl rounded-3xl flex items-center gap-x-3 hover:bg-white hover:text-black">
-                            <i class="fa-solid fa-play"></i>
-                            Смотреть дорамы
-                        </button>
-                    </div>
-                </div>
-            </div>
-
-            <div class="absolute bottom-12 left-1/2 -translate-x-1/2 bg-zinc-900/90 backdrop-blur-2xl px-8 py-5 rounded-3xl flex items-center gap-x-8 shadow-2xl max-w-2xl w-full">
-                <div class="text-sm uppercase tracking-widest">Продолжить смотреть</div>
-                <div onclick="watchDorama(0)" class="flex-1 flex items-center gap-4 cursor-pointer">
-                    <img src="https://picsum.photos/id/1015/120/70" class="rounded-2xl" alt="">
-                    <div>
-                        <div class="font-semibold">Алхимия душ • Серия 3</div>
-                        <div class="text-emerald-400 text-sm">Осталось 42 минуты</div>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
-
-    <div id="grammar" class="section max-w-screen-2xl mx-auto px-8 py-16">
-        <h1 class="text-5xl font-bold mb-4">Грамматика корейского языка</h1>
-        <p class="text-zinc-400 text-lg mb-12">Уроки по уровням. Объяснения + примеры из дорам + мини-тесты</p>
-
-        <div class="flex border-b border-zinc-700 pb-2 mb-10">
-            <button onclick="switchLevel(0)" id="level-tab-0" class="level-tab px-10 py-4 rounded-3xl font-semibold text-lg bg-rose-600 text-white">Начальный</button>
-            <button onclick="switchLevel(1)" id="level-tab-1" class="level-tab px-10 py-4 rounded-3xl font-semibold text-lg mx-3">Средний</button>
-            <button onclick="switchLevel(2)" id="level-tab-2" class="level-tab px-10 py-4 rounded-3xl font-semibold text-lg">Продвинутый</button>
-        </div>
-
-        <div id="lessons-grid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-8">
-            </div>
-    </div>
-
-    <div id="doramas" class="section max-w-screen-2xl mx-auto px-8 py-16">
-        <h1 class="text-5xl font-bold mb-4">Дорамы для изучения корейского</h1>
-        <p class="text-zinc-400 mb-12">Выбирай уровень сложности субтитров. Все видео — оригинальная корейская озвучка с русскими/корейскими субтитрами в VK</p>
+    <section class="hero">
+        <h1>Изучай корейский через лучшие дорамы</h1>
+        <p>Грамматика + живые диалоги + ежедневный streak. Минималистично. Красиво. Эффективно.</p>
         
-        <div id="dorama-grid" class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-8">
-            </div>
-    </div>
+        <div class="hero-controls">
+            <a href="#" class="btn-primary">
+                <span>▶</span> Начать уроки
+            </a>
 
-    <div id="profile" class="section max-w-screen-2xl mx-auto px-8 py-16">
-        <div class="max-w-2xl mx-auto bg-zinc-900 rounded-3xl p-12">
-            <div class="flex justify-between items-start">
-                <div>
-                    <h1 id="profile-username" class="text-4xl font-bold"></h1>
-                    <p id="profile-level" class="text-emerald-400 mt-2 text-xl"></p>
-                </div>
-                <div class="text-right">
-                    <div id="profile-streak" class="flex items-center justify-end text-6xl">🔥 <span id="profile-streak-count" class="font-black ml-3"></span></div>
-                    <p class="text-zinc-400">Дней подряд</p>
-                </div>
-            </div>
-
-            <div class="my-12 bg-black rounded-3xl p-8">
-                <div class="flex justify-between mb-4 text-sm">
-                    <span>Прогресс</span>
-                    <span id="xp-text" class="font-mono">2 840 XP</span>
-                </div>
-                <div class="h-4 bg-zinc-800 rounded-3xl overflow-hidden">
-                    <div class="h-4 w-[78%] bg-gradient-to-r from-rose-500 via-amber-400 to-yellow-400"></div>
-                </div>
-            </div>
-
-            <button onclick="logout()" class="w-full py-6 text-lg font-semibold border-2 border-zinc-700 hover:border-red-500 hover:text-red-400 rounded-3xl">Выйти из аккаунта</button>
-            
-            <div class="text-center text-zinc-500 text-sm mt-12">
-                Не забывай заходить каждый день — твой streak 🔥 растёт автоматически
-            </div>
-        </div>
-    </div>
-
-    <div onclick="if(event.target.id === 'auth-modal') hideAuthModal()" 
-         id="auth-modal"
-         class="hidden fixed inset-0 bg-black/90 backdrop-blur-2xl z-[10000] items-center justify-center">
-        <div onclick="event.stopImmediatePropagation()" 
-             class="modal-content bg-zinc-900 rounded-3xl w-full max-w-lg mx-4 p-10">
-            <h2 id="modal-title" class="text-3xl font-bold mb-8 text-center">Вход / Регистрация</h2>
-            
-            <div class="space-y-8">
-                <input id="auth-email" type="text" placeholder="Никнейм или email" 
-                       class="w-full px-6 py-5 bg-black border border-zinc-700 focus:border-rose-400 rounded-3xl outline-none text-lg">
-                
-                <input id="auth-password" type="password" placeholder="Пароль" 
-                       class="w-full px-6 py-5 bg-black border border-zinc-700 focus:border-rose-400 rounded-3xl outline-none text-lg">
-                
-                <div class="grid grid-cols-2 gap-4">
-                    <button onclick="registerUser()" class="py-5 bg-white text-black font-bold text-lg rounded-3xl">Зарегистрироваться</button>
-                    <button onclick="loginUser()" class="py-5 border-2 border-white font-bold text-lg rounded-3xl">Войти</button>
-                </div>
-                
-                <p class="text-center text-xs text-zinc-400">Данные хранятся только в браузере (localStorage). Для реального сайта — Firebase / Supabase.</p>
-            </div>
-            
-            <button onclick="hideAuthModal()" class="absolute top-8 right-8 text-4xl text-zinc-400 hover:text-white">×</button>
-        </div>
-    </div>
-
-    <div onclick="if(event.target.id === 'lesson-modal') hideLessonModal()" 
-         id="lesson-modal"
-         class="hidden fixed inset-0 bg-black/90 backdrop-blur-2xl z-[10000] items-center justify-center p-4">
-        <div onclick="event.stopImmediatePropagation()" 
-             class="modal-content bg-zinc-900 rounded-3xl max-w-3xl w-full max-h-[90vh] overflow-auto p-10">
-            <div id="lesson-content"></div>
-        </div>
-    </div>
-
-    <div onclick="if(event.target.id === 'player-modal') hidePlayerModal()" 
-         id="player-modal"
-         class="hidden fixed inset-0 bg-black/95 z-[10000] items-center justify-center p-6">
-        <div onclick="event.stopImmediatePropagation()" class="modal-content w-full max-w-[1280px] bg-zinc-950 rounded-3xl overflow-hidden shadow-2xl">
-            <div class="flex flex-col lg:flex-row">
-                <div class="flex-1">
-                    <div class="flex items-center justify-between px-8 py-6 border-b border-zinc-800">
-                        <div id="player-title" class="font-semibold text-2xl"></div>
-                        <button onclick="hidePlayerModal()" class="text-4xl text-zinc-400 hover:text-white">✕</button>
-                    </div>
-                    <div class="player-wrapper">
-                        <iframe id="vk-player" allowfullscreen></iframe>
-                    </div>
-                </div>
-                
-                <div class="lg:w-96 bg-zinc-900 p-8 flex flex-col">
-                    <h3 class="text-xl font-semibold mb-6 flex items-center gap-2">
-                        <span>📝</span> Новые слова из серии
-                    </h3>
-                    <div id="vocab-list" class="flex-1 space-y-4 overflow-y-auto pr-2"></div>
-                    
-                    <div class="mt-auto pt-8 border-t text-xs text-zinc-400 leading-relaxed">
-                        💡 На среднем уровне — русские субтитры<br>
-                        На продвинутом — корейские или без субтитров (настраивается в VK)
+            <div class="current-watch">
+                <img src="https://m.media-amazon.com/images/M/MV5BMTE0YWFmOTMtMDliMi00ZTIxLWE3OTEtZmNiYzBkMmViZDVmXkEyXkFqcGdeQXVyMTEzMTI1Mjk3._V1_.jpg" alt="poster" class="mini-poster">
+                <div class="info-text">
+                    <b>Алхимия душ • Серия 3</b>
+                    <span>Осталось 42 минуты</span>
+                    <div class="progress-line">
+                        <div class="progress-fill"></div>
                     </div>
                 </div>
             </div>
         </div>
-    </div>
+    </section>
 
-    <script>
-        // Tailwind
-        function initTailwind() {
-            tailwind.config = { content: [], theme: { extend: {} } }
-        }
-
-        let currentUser = null
-        let currentStreak = 12
-
-        const doramasData = [
-            {
-                id: 0,
-                title: "Алхимия душ",
-                year: "2022",
-                level: "Начальный",
-                subs: "Русские субтитры",
-                vkOid: "-64354864",
-                vkId: "456247272",
-                poster: "https://avatars.mds.yandex.net/i?id=b0c6c4247fce4c099c983807c4b89a81_l-5235427-images-thumbs&n=13",
-                description: "Фэнтези-эпик с магией. Идеально для новичков",
-                vocab: [
-                    { ko: "마법", ru: "Магия", pron: "Mabeop" },
-                    { ko: "영혼", ru: "Душа", pron: "Yeonghon" },
-                    { ko: "환혼", ru: "Алхимия", pron: "Hwanhon" },
-                    { ko: "왕자", ru: "Принц", pron: "Wangja" }
-                ]
-            },
-            {
-                id: 1,
-                title: "Алые сердца: Корё",
-                year: "2016",
-                level: "Средний",
-                subs: "Русские субтитры",
-                vkOid: "-64354864",
-                vkId: "456246944",
-                poster: "https://ir.ozone.ru/s3/multimedia-1-d/6957107977.jpg",
-                description: "Историческая мелодрама о времени",
-                vocab: [
-                    { ko: "달", ru: "Луна", pron: "Dal" },
-                    { ko: "사랑", ru: "Любовь", pron: "Sarang" },
-                    { ko: "시간", ru: "Время", pron: "Sigan" }
-                ]
-            },
-            {
-                id: 2,
-                title: "Месть от третьего лица",
-                year: "2022",
-                level: "Средний",
-                subs: "Русские субтитры",
-                vkOid: "-64354864",
-                vkId: "456248146",
-                poster: "https://24smi.org/public/media/movie/2022/11/15/xtdicssmntnf-mest-ot-tretego-litsa.jpg",
-                description: "Школьный триллер о мести",
-                vocab: [
-                    { ko: "복수", ru: "Месть", pron: "Boksu" },
-                    { ko: "비밀", ru: "Секрет", pron: "Bimil" }
-                ]
-            },
-            {
-                id: 3,
-                title: "Приятного аппетита, Ваше Величество",
-                year: "2025",
-                level: "Продвинутый",
-                subs: "Русские / без субтитров",
-                vkOid: "-229029351",
-                vkId: "456240358",
-                poster: "https://www.kino-teatr.ru/movie/poster/200491/258782.jpg",
-                description: "Кулинарное путешествие во времени",
-                vocab: [
-                    { ko: "요리", ru: "Кулинария", pron: "Yori" },
-                    { ko: "왕", ru: "Король", pron: "Wang" },
-                    { ko: "맛", ru: "Вкус", pron: "Mat" }
-                ]
-            },
-            // Новые дорамы
-            {
-                id: 4,
-                title: "Винченцо",
-                year: "2021",
-                level: "Средний",
-                subs: "Русские субтитры",
-                vkOid: "-64354864",
-                vkId: "456247236",
-                poster: "https://avatars.mds.yandex.net/get-kinopoisk-image/1773646/e0f59478-e5d4-40c6-9d27-9b1def9781df/1920x",
-                description: "Мафия, закон и корейская мафия в Италии",
-                vocab: [
-                    { ko: "변호사", ru: "Адвокат", pron: "Byeonhosa" },
-                    { ko: "복수", ru: "Месть", pron: "Boksu" }
-                ]
-            },
-            {
-                id: 5,
-                title: "Королева слёз",
-                year: "2024",
-                level: "Продвинутый",
-                subs: "Русские субтитры",
-                vkOid: "-64354864",
-                vkId: "456251989",
-                poster: "https://avatars.mds.yandex.net/get-kinopoisk-image/10809116/b0ee2dce-5a72-4d64-a393-a484e8fbdaed/1920x",
-                description: "Романтическая комедия о разводе миллиардеров",
-                vocab: [
-                    { ko: "눈물", ru: "Слёзы", pron: "Nunmul" },
-                    { ko: "사랑", ru: "Любовь", pron: "Sarang" }
-                ]
-            }
-        ]
-
-        const grammarLessons = {
-            0: [
-                { id: 1, title: "~입니다 / ~이에요", content: `<h2 class="text-4xl font-bold mb-8">Урок 1 • Как сказать «Я — ...»</h2><div class="bg-black rounded-3xl p-8 mb-8"><div class="korean-font text-5xl">저는 학생입니다.</div><div class="text-rose-400 mt-2">Jeoneun haksaengimnida.</div><div class="text-emerald-400 mt-1">Я — студент(ка).</div></div><p class="text-zinc-400">Примеры из дорам + мини-тест</p>` },
-                { id: 2, title: "~아요/어요 (настоящее время)", content: `<h2 class="text-4xl font-bold mb-8">Урок 2 • Настоящее время</h2><p class="text-zinc-400">Самое используемое окончание в повседневной речи.</p>` },
-                { id: 3, title: "Вопросы • ~까? / ~예요?", content: `<h2 class="text-4xl font-bold mb-8">Урок 3 • Как задавать вопросы</h2>` }
-            ],
-            1: [
-                { id: 4, title: "~았/었어요 (прошедшее)", content: `<h2 class="text-4xl font-bold mb-8">Урок 4 • Прошедшее время</h2>` },
-                { id: 5, title: "~고 싶어요 (хотеть)", content: `<h2 class="text-4xl font-bold mb-8">Урок 5 • Хотеть что-то сделать</h2>` }
-            ],
-            2: [
-                { id: 6, title: "~(으)ㄹ 거예요 (будущее)", content: `<h2 class="text-4xl font-bold mb-8">Урок 6 • Будущее время</h2>` },
-                { id: 7, title: "~ㄴ/는다고 하다", content: `<h2 class="text-4xl font-bold mb-8">Урок 7 • Передача чужих слов</h2>` }
-            ]
-        }
-
-        function navigateTo(section) {
-            document.querySelectorAll('.section').forEach(s => s.classList.remove('active'))
-            document.getElementById(section).classList.add('active')
-            
-            if (section === 'doramas') renderDoramas()
-            if (section === 'grammar') renderLessons(0)
-            if (section === 'profile') updateProfileUI()
-        }
-
-        function showAuthModal() {
-            document.getElementById('auth-modal').classList.remove('hidden')
-            document.getElementById('auth-modal').classList.add('flex')
-        }
-
-        function hideAuthModal() {
-            const m = document.getElementById('auth-modal')
-            m.classList.add('hidden')
-            m.classList.remove('flex')
-        }
-
-        function registerUser() {
-            const name = document.getElementById('auth-email').value.trim() || "Арууке"
-            currentUser = { username: name, level: "Начальный", xp: 2840 }
-            localStorage.setItem('klearn_user', JSON.stringify(currentUser))
-            updateAuthUI()
-            hideAuthModal()
-            alert("🎉 Регистрация прошла успешно! Добро пожаловать в K-Learn")
-            navigateTo('home')
-            updateStreak()
-        }
-
-        function loginUser() {
-            const saved = localStorage.getItem('klearn_user')
-            if (saved) currentUser = JSON.parse(saved)
-            else currentUser = { username: "Арууке", level: "Начальный", xp: 2840 }
-            updateAuthUI()
-            hideAuthModal()
-            updateStreak()
-        }
-
-        function updateAuthUI() {
-            if (!currentUser) return
-            document.getElementById('user-info').classList.remove('hidden')
-            document.getElementById('auth-button').classList.add('hidden')
-            document.getElementById('username-display').innerHTML = currentUser.username
-        }
-
-        function logout() {
-            localStorage.removeItem('klearn_user')
-            currentUser = null
-            document.getElementById('user-info').classList.add('hidden')
-            document.getElementById('auth-button').classList.remove('hidden')
-            navigateTo('home')
-        }
-
-        function updateStreak() {
-            const today = new Date().toISOString().split('T')[0]
-            const last = localStorage.getItem('lastLogin')
-            
-            if (last === today) {
-                currentStreak = parseInt(localStorage.getItem('streak') || '12')
-            } else {
-                const yesterday = new Date(Date.now() - 86400000).toISOString().split('T')[0]
-                currentStreak = (last === yesterday) ? (parseInt(localStorage.getItem('streak') || '0') + 1) : 1
-            }
-            
-            localStorage.setItem('streak', currentStreak)
-            localStorage.setItem('lastLogin', today)
-            document.getElementById('streak-count').textContent = currentStreak
-        }
-
-        function renderLessons(level) {
-            const grid = document.getElementById('lessons-grid')
-            grid.innerHTML = ''
-            grammarLessons[level].forEach(lesson => {
-                const card = document.createElement('div')
-                card.className = `card bg-zinc-900 rounded-3xl p-8 cursor-pointer border border-transparent hover:border-rose-500`
-                card.innerHTML = `
-                    <div class="flex justify-between text-xs mb-6">
-                        <span class="px-5 py-2 bg-zinc-800 rounded-3xl">${level === 0 ? 'Начальный' : level === 1 ? 'Средний' : 'Продвинутый'}</span>
-                        <span class="text-emerald-400">Урок ${lesson.id}</span>
-                    </div>
-                    <h3 class="text-2xl font-semibold mb-3">${lesson.title}</h3>
-                    <p class="text-zinc-400 text-sm line-clamp-3">Нажми, чтобы открыть полный урок с примерами и тестом</p>
-                `
-                card.onclick = () => showLesson(lesson)
-                grid.append(card)
-            })
-        }
-
-        function switchLevel(lvl) {
-            document.querySelectorAll('.level-tab').forEach((el, i) => {
-                if (i === lvl) el.classList.add('bg-rose-600', 'text-white')
-                else el.classList.remove('bg-rose-600', 'text-white')
-            })
-            renderLessons(lvl)
-        }
-
-        function showLesson(lesson) {
-            document.getElementById('lesson-content').innerHTML = lesson.content + `<div class="mt-12 text-center"><button onclick="hideLessonModal()" class="px-10 py-4 bg-rose-600 rounded-3xl font-medium">Закрыть урок</button></div>`
-            const modal = document.getElementById('lesson-modal')
-            modal.classList.remove('hidden')
-            modal.classList.add('flex')
-        }
-
-        function hideLessonModal() {
-            const modal = document.getElementById('lesson-modal')
-            modal.classList.add('hidden')
-            modal.classList.remove('flex')
-        }
-
-        function renderDoramas() {
-            const grid = document.getElementById('dorama-grid')
-            grid.innerHTML = ''
-            doramasData.forEach(d => {
-                const cardHTML = `
-                <div onclick="watchDorama(${d.id});" class="card bg-zinc-900 rounded-3xl overflow-hidden cursor-pointer group">
-                    <div class="relative">
-                        <img src="${d.poster}" alt="${d.title}" class="w-full aspect-video object-cover">
-                        <div class="absolute top-4 right-4 px-4 py-1 text-xs bg-black/70 backdrop-blur rounded-3xl">${d.level}</div>
-                        <div class="absolute bottom-4 left-4 bg-white/90 text-black text-xs px-3 py-1 rounded-3xl font-medium">${d.subs}</div>
-                    </div>
-                    <div class="p-6">
-                        <div class="flex justify-between">
-                            <h4 class="text-xl font-semibold group-hover:text-rose-400">${d.title}</h4>
-                            <span class="text-xs text-zinc-400">${d.year}</span>
-                        </div>
-                        <p class="text-sm text-zinc-400 mt-3 line-clamp-2">${d.description}</p>
-                    </div>
-                </div>`
-                grid.innerHTML += cardHTML
-            })
-        }
-
-        function watchDorama(id) {
-            const d = doramasData.find(x => x.id === id)
-            if (!d) return
-            
-            // Улучшенный embed с hd=2 и большим разрешением
-            const embedUrl = `https://vk.com/video_ext.php?oid=${d.vkOid}&id=${d.vkId}&hd=2&autoplay=1`
-            document.getElementById('vk-player').src = embedUrl
-            
-            // Заголовок
-            document.getElementById('player-title').innerHTML = `
-                <span class="text-rose-400">${d.title}</span> 
-                <span class="text-zinc-400 text-base ml-2">(${d.year} • ${d.level})</span>
-            `
-            // Словарь
-            const vocabHTML = d.vocab.map(v => `
-                <div onclick="this.classList.toggle('line-through'); this.classList.toggle('opacity-40')" class="flex items-center justify-between bg-zinc-800 hover:bg-zinc-700 p-5 rounded-3xl cursor-pointer">
-                    <div class="flex-1">
-                        <span class="korean-font text-3xl">${v.ko}</span>
-                        <span class="block text-xs text-zinc-400 mt-1">${v.pron}</span>
-                    </div>
-                    <div class="text-emerald-400 text-right">${v.ru}</div>
-                </div>
-            `).join('')
-            
-            document.getElementById('vocab-list').innerHTML = vocabHTML || '<p class="text-zinc-400">Словарь для этой серии скоро появится ✨</p>'
-            
-            // Показать модалку
-            const modal = document.getElementById('player-modal')
-            modal.classList.remove('hidden')
-            modal.classList.add('flex')
-            
-            // +XP после 30 секунд просмотра
-            setTimeout(() => {
-                if (currentUser) currentUser.xp += 80
-            }, 30000)
-        }
-
-        function hidePlayerModal() {
-            const modal = document.getElementById('player-modal')
-            modal.classList.add('hidden')
-            modal.classList.remove('flex')
-            document.getElementById('vk-player').src = '' // останавливаем видео
-        }
-
-        function updateProfileUI() {
-            if (!currentUser) return
-            document.getElementById('profile-username').innerHTML = `${currentUser.username} <span class="text-3xl">👋</span>`
-            document.getElementById('profile-level').innerHTML = `Уровень • ${currentUser.level}`
-            document.getElementById('profile-streak-count').textContent = currentStreak
-            document.getElementById('xp-text').textContent = `${currentUser.xp} XP`
-        }
-
-        function initApp() {
-            initTailwind()
-            
-            // Загрузка пользователя
-            const saved = localStorage.getItem('klearn_user')
-            if (saved) {
-                currentUser = JSON.parse(saved)
-                updateAuthUI()
-            }
-            
-            updateStreak()
-            renderDoramas()
-            renderLessons(0)
-            
-            console.log('%c✅ K-Learn улучшен! Все VK-ссылки реальные и работают (оригинальная озвучка). Дизайн стал ещё минималистичнее и премиальнее.', 'color:#e11d48; font-size:15px; font-weight:bold')
-            console.log('Для GitHub: просто сохрани как index.html и включи GitHub Pages')
-        }
-
-        window.onload = initApp
-    </script>
 </body>
 </html>
