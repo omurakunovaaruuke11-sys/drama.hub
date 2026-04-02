@@ -101,10 +101,8 @@
     </style>
 </head>
 <body class="bg-zinc-950 text-white min-h-screen">
-    <!-- NAVBAR -->
     <nav class="netflix-header border-b border-zinc-800 sticky top-0 z-50 backdrop-blur-lg">
         <div class="max-w-screen-2xl mx-auto px-8 py-5 flex items-center justify-between">
-            <!-- Logo -->
             <div class="flex items-center gap-x-3">
                 <div class="w-11 h-11 bg-gradient-to-br from-rose-600 to-red-500 rounded-3xl flex items-center justify-center text-4xl shadow-inner">🇰🇷</div>
                 <div class="flex flex-col">
@@ -113,7 +111,6 @@
                 </div>
             </div>
 
-            <!-- Menu -->
             <div class="flex items-center gap-x-10 text-base font-medium">
                 <a onclick="navigateTo('home')" class="nav-link cursor-pointer flex items-center gap-x-2 hover:text-rose-400">
                     <i class="fa-solid fa-house"></i>
@@ -133,9 +130,7 @@
                 </a>
             </div>
 
-            <!-- Right side -->
             <div class="flex items-center gap-x-6">
-                <!-- Streak -->
                 <div onclick="navigateTo('profile')" class="flex items-center gap-x-3 bg-zinc-900/80 hover:bg-zinc-800 px-6 py-3 rounded-3xl cursor-pointer border border-zinc-700 hover:border-amber-400">
                     <div class="streak-flame text-3xl">🔥</div>
                     <div class="text-center">
@@ -144,7 +139,6 @@
                     </div>
                 </div>
 
-                <!-- User -->
                 <div id="user-info" onclick="navigateTo('profile')" class="hidden items-center gap-x-3 cursor-pointer">
                     <div class="text-right">
                         <div id="username-display" class="font-semibold"></div>
@@ -163,7 +157,6 @@
         </div>
     </nav>
 
-    <!-- HOME SECTION -->
     <div id="home" class="section active">
         <div class="hero-bg h-screen flex items-center relative">
             <div class="max-w-screen-2xl mx-auto px-8 z-10">
@@ -189,7 +182,6 @@
                 </div>
             </div>
 
-            <!-- Fake continue watching banner -->
             <div class="absolute bottom-12 left-1/2 -translate-x-1/2 bg-zinc-900/90 backdrop-blur-2xl px-8 py-5 rounded-3xl flex items-center gap-x-8 shadow-2xl max-w-2xl w-full">
                 <div class="text-sm uppercase tracking-widest">Продолжить смотреть</div>
                 <div onclick="watchDorama(0)" class="flex-1 flex items-center gap-4 cursor-pointer">
@@ -203,7 +195,6 @@
         </div>
     </div>
 
-    <!-- GRAMMAR SECTION -->
     <div id="grammar" class="section max-w-screen-2xl mx-auto px-8 py-16">
         <h1 class="text-5xl font-bold mb-4">Грамматика корейского языка</h1>
         <p class="text-zinc-400 text-lg mb-12">Уроки по уровням. Объяснения + примеры из дорам + мини-тесты</p>
@@ -215,21 +206,17 @@
         </div>
 
         <div id="lessons-grid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-8">
-            <!-- JS filled -->
-        </div>
+            </div>
     </div>
 
-    <!-- DORAMAS SECTION -->
     <div id="doramas" class="section max-w-screen-2xl mx-auto px-8 py-16">
         <h1 class="text-5xl font-bold mb-4">Дорамы для изучения корейского</h1>
         <p class="text-zinc-400 mb-12">Выбирай уровень сложности субтитров. Все видео — оригинальная корейская озвучка с русскими/корейскими субтитрами в VK</p>
         
         <div id="dorama-grid" class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-8">
-            <!-- JS filled -->
-        </div>
+            </div>
     </div>
 
-    <!-- PROFILE SECTION -->
     <div id="profile" class="section max-w-screen-2xl mx-auto px-8 py-16">
         <div class="max-w-2xl mx-auto bg-zinc-900 rounded-3xl p-12">
             <div class="flex justify-between items-start">
@@ -261,7 +248,6 @@
         </div>
     </div>
 
-    <!-- AUTH MODAL -->
     <div onclick="if(event.target.id === 'auth-modal') hideAuthModal()" 
          id="auth-modal"
          class="hidden fixed inset-0 bg-black/90 backdrop-blur-2xl z-[10000] items-center justify-center">
@@ -288,7 +274,6 @@
         </div>
     </div>
 
-    <!-- LESSON MODAL -->
     <div onclick="if(event.target.id === 'lesson-modal') hideLessonModal()" 
          id="lesson-modal"
          class="hidden fixed inset-0 bg-black/90 backdrop-blur-2xl z-[10000] items-center justify-center p-4">
@@ -298,13 +283,11 @@
         </div>
     </div>
 
-    <!-- DORAMA PLAYER MODAL (улучшенный) -->
     <div onclick="if(event.target.id === 'player-modal') hidePlayerModal()" 
          id="player-modal"
          class="hidden fixed inset-0 bg-black/95 z-[10000] items-center justify-center p-6">
         <div onclick="event.stopImmediatePropagation()" class="modal-content w-full max-w-[1280px] bg-zinc-950 rounded-3xl overflow-hidden shadow-2xl">
             <div class="flex flex-col lg:flex-row">
-                <!-- Video -->
                 <div class="flex-1">
                     <div class="flex items-center justify-between px-8 py-6 border-b border-zinc-800">
                         <div id="player-title" class="font-semibold text-2xl"></div>
@@ -315,7 +298,6 @@
                     </div>
                 </div>
                 
-                <!-- Sidebar с новыми словами -->
                 <div class="lg:w-96 bg-zinc-900 p-8 flex flex-col">
                     <h3 class="text-xl font-semibold mb-6 flex items-center gap-2">
                         <span>📝</span> Новые слова из серии
@@ -366,7 +348,7 @@
                 subs: "Русские субтитры",
                 vkOid: "-64354864",
                 vkId: "456246944",
-                poster: "https://ir.ozone.ru/s3/multimedia-1-d/6957107977.jpg
+                poster: "https://ir.ozone.ru/s3/multimedia-1-d/6957107977.jpg",
                 description: "Историческая мелодрама о времени",
                 vocab: [
                     { ko: "달", ru: "Луна", pron: "Dal" },
@@ -382,7 +364,7 @@
                 subs: "Русские субтитры",
                 vkOid: "-64354864",
                 vkId: "456248146",
-                poster: "https://24smi.org/public/media/movie/2022/11/15/xtdicssmntnf-mest-ot-tretego-litsa.jpg,
+                poster: "https://24smi.org/public/media/movie/2022/11/15/xtdicssmntnf-mest-ot-tretego-litsa.jpg",
                 description: "Школьный триллер о мести",
                 vocab: [
                     { ko: "복수", ru: "Месть", pron: "Boksu" },
@@ -397,7 +379,7 @@
                 subs: "Русские / без субтитров",
                 vkOid: "-229029351",
                 vkId: "456240358",
-                poster:" https://www.kino-teatr.ru/movie/poster/200491/258782.jpg,
+                poster: "https://www.kino-teatr.ru/movie/poster/200491/258782.jpg",
                 description: "Кулинарное путешествие во времени",
                 vocab: [
                     { ko: "요리", ru: "Кулинария", pron: "Yori" },
@@ -414,7 +396,7 @@
                 subs: "Русские субтитры",
                 vkOid: "-64354864",
                 vkId: "456247236",
-                poster: https://avatars.mds.yandex.net/get-kinopoisk-image/1773646/e0f59478-e5d4-40c6-9d27-9b1def9781df/1920x,
+                poster: "https://avatars.mds.yandex.net/get-kinopoisk-image/1773646/e0f59478-e5d4-40c6-9d27-9b1def9781df/1920x",
                 description: "Мафия, закон и корейская мафия в Италии",
                 vocab: [
                     { ko: "변호사", ru: "Адвокат", pron: "Byeonhosa" },
@@ -429,7 +411,7 @@
                 subs: "Русские субтитры",
                 vkOid: "-64354864",
                 vkId: "456251989",
-                poster: "https://avatars.mds.yandex.net/get-kinopoisk-image/10809116/b0ee2dce-5a72-4d64-a393-a484e8fbdaed/1920x,
+                poster: "https://avatars.mds.yandex.net/get-kinopoisk-image/10809116/b0ee2dce-5a72-4d64-a393-a484e8fbdaed/1920x",
                 description: "Романтическая комедия о разводе миллиардеров",
                 vocab: [
                     { ko: "눈물", ru: "Слёзы", pron: "Nunmul" },
@@ -603,7 +585,7 @@
             `
             // Словарь
             const vocabHTML = d.vocab.map(v => `
-                <div onclick="this.classList.toggle('line-through', 'opacity-40')" class="flex items-center justify-between bg-zinc-800 hover:bg-zinc-700 p-5 rounded-3xl cursor-pointer">
+                <div onclick="this.classList.toggle('line-through'); this.classList.toggle('opacity-40')" class="flex items-center justify-between bg-zinc-800 hover:bg-zinc-700 p-5 rounded-3xl cursor-pointer">
                     <div class="flex-1">
                         <span class="korean-font text-3xl">${v.ko}</span>
                         <span class="block text-xs text-zinc-400 mt-1">${v.pron}</span>
